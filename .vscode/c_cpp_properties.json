@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/cpp"
+            ],
+            "cppStandard": "c++23"
+        }
+    ],
+    "version": 4
+}

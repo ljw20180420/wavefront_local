@@ -1,0 +1,163 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "test ini",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "test/test_ini.cpp",
+                "src/ini.cpp",
+                "-o",
+                "test/test_ini"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build ini test."
+        },
+        {
+            "type": "cppbuild",
+            "label": "test lwfa",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "test/test_lwfa.cpp",
+                "src/*.cpp",
+                "-o",
+                "test/test_lwfa"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build lwfa test."
+        },
+        {
+            "type": "cppbuild",
+            "label": "test lbiwfa",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "test/test_lbiwfa.cpp",
+                "src/*.cpp",
+                "-o",
+                "test/test_lbiwfa"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build lbiwfa test."
+        },
+        {
+            "type": "cppbuild",
+            "label": "benchmark lwfa",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "benchmark/benchmark_lwfa.cpp",
+                "src/*.cpp",
+                "-o",
+                "benchmark/benchmark_lwfa"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build lwfa benchmark."
+        },
+        {
+            "type": "cppbuild",
+            "label": "benchmark lbiwfa",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "benchmark/benchmark_lbiwfa.cpp",
+                "src/*.cpp",
+                "-o",
+                "benchmark/benchmark_lbiwfa"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build lbiwfa benchmark."
+        },
+        {
+            "type": "cppbuild",
+            "label": "benchmark parasail",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=gnu++23",
+                "benchmark/benchmark_parasail.cpp",
+                "src/*.cpp",
+                "-L./parasail/build",
+                "-lparasail",
+                "-Wl,-rpath,'$ORIGIN/../parasail/build'",
+                "-o",
+                "benchmark/benchmark_parasail"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build parasail benchmark."
+        },
+        {
+            "type": "cppbuild",
+            "label": "benchmark seqan",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-std=c++23",
+                "-Iinclude",
+                "benchmark/benchmark_seqan.cpp",
+                "src/*.cpp",
+                "-o",
+                "benchmark/benchmark_seqan"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cpp"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build seqan benchmark."
+        }
+    ],
+    "version": "2.0.0"
+}

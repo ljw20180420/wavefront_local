@@ -1,0 +1,26 @@
+[project]
+name = "wavefront-local"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ljw", email = "ljw2017@sjtu.edu.cn" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "biopython>=1.87",
+    "jinja2>=3.1.6",
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "plotnine>=0.15.7",
+    "redlines[nupunkt]>=0.6.1",
+    "tqdm>=4.68.4",
+    "typing-extensions>=4.16.0",
+]
+
+[project.scripts]
+wavefront-local = "wavefront_local:main"
+
+[build-system]
+requires = ["uv_build>=0.11.14,<0.12.0"]
+build-backend = "uv_build"

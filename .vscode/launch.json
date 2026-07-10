@@ -1,0 +1,187 @@
+{
+    "configurations": [
+        {
+            "name": "debug test ini",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/test/test_ini",
+            "args": ["paper/test.ini"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "test ini",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug test lwfa",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/test/test_lwfa",
+            "args": ["paper/test.ini"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "test lwfa",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug test lbiwfa",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/test/test_lbiwfa",
+            "args": ["paper/test.ini"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "test lbiwfa",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug benchmark lwfa",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/benchmark/benchmark_lwfa",
+            "args": ["250", "10", "10"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "benchmark lwfa",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug benchmark lbiwfa",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/benchmark/benchmark_lbiwfa",
+            "args": ["250", "10", "10"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "benchmark lbiwfa",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug benchmark parasail",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/benchmark/benchmark_parasail",
+            "args": ["250", "10", "10", "striped"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "benchmark parasail",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "debug benchmark seqan",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cpp/benchmark/benchmark_seqan",
+            "args": ["250", "10", "10"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "benchmark seqan",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ],
+    "version": "2.0.0"
+}
