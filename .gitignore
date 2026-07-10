@@ -22,4 +22,3 @@ wheels/
 !/cpp/benchmark/*.cpp
 /cpp/parasail
 /cpp/include/seqan3
-/qwenpaw
