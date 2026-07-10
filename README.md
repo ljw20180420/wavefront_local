@@ -90,6 +90,10 @@ int main(int argc, char **argv)
 }
 ```
 
+# Python prototypes
+
+Python prototypes of the local [`WFA`](src/wavefront_local/wfa.py) and [`BiWFA`](src/wavefront_local/wfa.py) are available. These python prototypes have higher readability than the c++ library. One may learn how lWFA and lBiWFA work by reading these python prototypes.
+
 # Citation
 
 In preparation.
