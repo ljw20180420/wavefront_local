@@ -38,10 +38,12 @@ then we recover the relation between the global-scope WFA scoring system and the
 
 The recurrence of wavefront components for the wavefront alignment in the local scope (lWFA) is
 ```math
-\mathcal{I}_{s,d} = \max(\mathcal{M}_{s-o-e,d-1} + 1, \mathcal{I}_{s-e,d-1} + 1) \\
-\mathcal{D}_{s,d} = \max(\mathcal{M}_{s-o-e,d+1} + 1, \mathcal{D}_{s-e,d+1} +1) \\
-\mathcal{X} = \max(f, \mathcal{M}_{s-x,d} + 2, \mathcal{I}_{s,d}, \mathcal{D}_{s,d}) \\
-\mathcal{M}_{s,d} = \mathcal{X}_{s,d} + 2\mu(m,n)
+\begin{aligned}
+&\mathcal{I}_{s,d} = \max(\mathcal{M}_{s-o-e,d-1} + 1, \mathcal{I}_{s-e,d-1} + 1) \\
+&\mathcal{D}_{s,d} = \max(\mathcal{M}_{s-o-e,d+1} + 1, \mathcal{D}_{s-e,d+1} +1) \\
+&\mathcal{X} = \max(f, \mathcal{M}_{s-x,d} + 2, \mathcal{I}_{s,d}, \mathcal{D}_{s,d}) \\
+&\mathcal{M}_{s,d} = \mathcal{X}_{s,d} + 2\mu(m,n)
+\end{aligned}
 ```
 where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $\mathcal{X}_{s,d}$ by including the possibility that $\mathcal{X}_{s,d}$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
 
