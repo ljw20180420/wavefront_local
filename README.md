@@ -5,44 +5,44 @@
 # Scoring system
 
 The difficulty of applying WFA to the local alignment is that the WFA scoring system does not award matches. Thus, the best possible score is zero. However, in the local alignment scope, this can be easily achieved by aligning nothing at all. Eizenga and Paten show that the WFA scoring system with mismatch penalty $x$, gap opening penalty $o$, and gap extension penalty $e$, can be related to the classical scoring system with match score $l_c$, mismatch penalty $x_c$, gap opening penalty $o_c$, and gap extension penalty $e_c$ by
-$$
+```math
 x = 2l_c + 2x_c \\
 o = 2o_c \\
 e = 2e_c + l_c
-$$
+```
 By the identiy
-$$
+```math
 2L + 2X + E = M + N
-$$
+```
 with $L$ the total matches, $X$ the total mismatches, $E$ the total gap size, $M$ and $N$ the size of text and qury, respectively, Eizenga and Paten prove that the classical score $s_c$ and the WFA score $s_w$ are related by
-$$
+```math
 2s_c + s_w = l_c(M + N)
-$$
+```
 We extend their observation by penalize the unaligned region in the local scope. In detail, let $J$ be the total size of unaligned region. Then there is the identity
-$$
+```math
 2L + 2X + E + J = M + N
-$$
+```
 for the local scope. We penalty each step in the unaligned region by $j$. Observe that if set the local-scope WFA scoring system by 
-$$
+```math
 x = 2l_c + 2x_c \\
 o = 2o_c \\
 e = 2e_c + l_c \\
 j = l_c
-$$
-then we recover the relation between the global-scope WFA scoring system and the classical one as 
-$$
+```
+then we recover the relation between the global-scope WFA scoring system and the classical one as
+```math
 2s_c + s_w = l_c(M + N)
-$$
+```
 
 # Recurrence of wavefront components in the local alignemnt scope
 
 The recurrence of wavefront components for the wavefront alignment in the local scope (lWFA) is
-$$
+```math
 \mathcal{I}_{s,d} = \max(\mathcal{M}_{s-o-e,d-1} + 1, \mathcal{I}_{s-e,d-1} + 1) \\
 \mathcal{D}_{s,d} = \max(\mathcal{M}_{s-o-e,d+1} + 1, \mathcal{D}_{s-e,d+1} +1) \\
 \mathcal{X} = \max(f, \mathcal{M}_{s-x,d} + 2, \mathcal{I}_{s,d}, \mathcal{D}_{s,d}) \\
 \mathcal{M}_{s,d} = \mathcal{X}_{s,d} + 2\mu(m,n)
-$$
+```
 where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $\mathcal{X}_{s,d}$ by including the possibility that $\mathcal{X}_{s,d}$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
 
 It can be prove that this recurrence format keeps the $O(sN)$ time complexity and the $O(s^2)$ space complexity. Furthermore, the bidirectional technique also works for the WFA in the local scope, which improve the space complexity from $O(s^2)$ to $O(s)$ while keep the $O(sN)$ time complexity.
