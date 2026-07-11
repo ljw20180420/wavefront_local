@@ -49,7 +49,7 @@ The recurrence of wavefront components for the wavefront alignment in the local 
 &\mathcal{M}_{s,d} = \mathcal{X}_{s,d} + 2\mu(m,n)
 \end{aligned}
 ```
-where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $\mathcal{X}_{s,d}$ by including the possibility that $\mathcal{X}_{s,d}$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
+where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $`\mathcal{X}_{s,d}`$ by including the possibility that $`\mathcal{X}_{s,d}`$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
 
 It can be prove that this recurrence format keeps the $O(sN)$ time complexity and the $O(s^2)$ space complexity. Furthermore, the bidirectional technique also works for the WFA in the local scope, which improve the space complexity from $O(s^2)$ to $O(s)$ while keep the $O(sN)$ time complexity.
 
