@@ -6,9 +6,11 @@
 
 The difficulty of applying WFA to the local alignment is that the WFA scoring system does not award matches. Thus, the best possible score is zero. However, in the local alignment scope, this can be easily achieved by aligning nothing at all. Eizenga and Paten show that the WFA scoring system with mismatch penalty $x$, gap opening penalty $o$, and gap extension penalty $e$, can be related to the classical scoring system with match score $l_c$, mismatch penalty $x_c$, gap opening penalty $o_c$, and gap extension penalty $e_c$ by
 ```math
-x = 2l_c + 2x_c \\
-o = 2o_c \\
-e = 2e_c + l_c
+\begin{aligned}
+&x = 2l_c + 2x_c \\
+&o = 2o_c \\
+&e = 2e_c + l_c
+\end{aligned}
 ```
 By the identiy
 ```math
@@ -24,10 +26,12 @@ We extend their observation by penalize the unaligned region in the local scope.
 ```
 for the local scope. We penalty each step in the unaligned region by $j$. Observe that if set the local-scope WFA scoring system by 
 ```math
-x = 2l_c + 2x_c \\
-o = 2o_c \\
-e = 2e_c + l_c \\
-j = l_c
+\begin{aligned}
+&x = 2l_c + 2x_c \\
+&o = 2o_c \\
+&e = 2e_c + l_c \\
+&j = l_c
+\end{aligned}
 ```
 then we recover the relation between the global-scope WFA scoring system and the classical one as
 ```math
@@ -45,7 +49,7 @@ The recurrence of wavefront components for the wavefront alignment in the local 
 &\mathcal{M}_{s,d} = \mathcal{X}_{s,d} + 2\mu(m,n)
 \end{aligned}
 ```
-where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $\mathcal{X}_{s,d}$ by including the possibility that $\mathcal{X}_{s,d}$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
+where $f = s / j$ if $0 = s\pmod j$, otherwise $f = -\infty$. Compared with the global WFA, lWFA computes $`\mathcal{X}_{s,d}`$ by including the possibility that $\mathcal{X}_{s,d}$ corresponds to the start cell of the aligned region. This is achieved by the term $f$. If $0 = s\pmod j$, then the unaligned region of size $f = s / j$ has the score exactly equal to $s$. Otherwise, just set $f = -\infty$.  
 
 It can be prove that this recurrence format keeps the $O(sN)$ time complexity and the $O(s^2)$ space complexity. Furthermore, the bidirectional technique also works for the WFA in the local scope, which improve the space complexity from $O(s^2)$ to $O(s)$ while keep the $O(sN)$ time complexity.
 
