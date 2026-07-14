@@ -22,3 +22,6 @@ wheels/
 !/cpp/benchmark/*.cpp
 /cpp/parasail
 /cpp/include/seqan3
+examples/*
+!examples/*.cpp
+!examples/*.sh
