@@ -10,8 +10,9 @@ file(GLOB CPP_SOURCES CONFIGURE_DEPENDS "cpp/src/*.cpp")
 
 pybind11_add_module(
     _core MODULE
+    src/wavefront_local/bindings.cpp
     ${CPP_SOURCES}
 )
-target_include_directories(_core PRIVATE cpp)
+target_include_directories(_core PRIVATE cpp/src)
 
 install(TARGETS _core DESTINATION ${SKBUILD_PROJECT_NAME})

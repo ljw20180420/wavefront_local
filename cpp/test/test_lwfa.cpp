@@ -83,13 +83,13 @@ int main(int argc, char **argv)
                     {
                         std::string err = std::get<std::string>(err_);
 
-                        std::string python_file = "paper/test/align/" + score_schema_name + '/' + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
+                        std::string python_file = "test/py/align/pylwfa/" + score_schema_name + '/' + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
                         std::vector<int32_t> s_ts = get_python_wavefront_score(python_file);
 
                         FrontXM FrXM;
                         Front FrI, FrD;
 
-                        std::string test_file = "paper/test/data/" + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
+                        std::string test_file = "test/data/" + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
 
                         std::cerr << test_file << ": " << total_time << " ms\n";
                         std::ifstream fin(test_file);

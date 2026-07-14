@@ -22,7 +22,7 @@ dependencies = [
 cache-keys = [
     { file = "pyproject.toml" },
     { file = "cpp/src/**/*.{h,c,hpp,cpp}" },
-    { file = "src/wavefront_local/lwfa_cpp.cpp" },
+    { file = "src/wavefront_local/bindings.cpp" },
     { file = "CMakeLists.txt"},
 ]
 
