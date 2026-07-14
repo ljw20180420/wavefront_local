@@ -57,7 +57,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/cpp/test/test_lbiwfa",
-            "args": ["paper/test.ini"],
+            "args": ["test/test.ini"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
