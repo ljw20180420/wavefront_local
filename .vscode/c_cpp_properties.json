@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/cpp",
+                "${workspaceFolder}/cpp/src",
                 "${workspaceFolder}/.venv/lib/python3.14/site-packages/pybind11/include"
             ],
             "cppStandard": "c++23"
