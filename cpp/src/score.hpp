@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <string>
+#include <cstdint>
 
 struct ScoreCanonical
 {

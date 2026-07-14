@@ -3,7 +3,6 @@
 #include "front.hpp"
 #include "bifront.hpp"
 #include <string>
-#include <cstdint>
 
 void next(int32_t N, int32_t M, BiFront &FrM, BiFront &FrI, BiFront &FrD, int32_t s, int32_t x, int32_t o, int32_t e, int32_t j, char c);
 

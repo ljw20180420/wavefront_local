@@ -16,7 +16,6 @@ wheels/
 !/paper/benchmark/result
 !/paper/benchmark.ini
 !/paper/benchmark.sh
-/paper/align
 /cpp/test/*
 !/cpp/test/*.cpp
 /cpp/benchmark/*
@@ -26,3 +25,4 @@ wheels/
 examples/*
 !examples/*.cpp
 !examples/*.sh
+/wheelhouse
