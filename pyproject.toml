@@ -1,7 +1,7 @@
 [project]
 name = "wavefront-local"
 version = "0.1.0"
-description = "Add your description here"
+description = "Wavefront alignment for the local alignment scope."
 readme = "README.md"
 authors = [
     { name = "ljw", email = "ljw2017@sjtu.edu.cn" }
@@ -14,14 +14,23 @@ dependencies = [
     "pandas>=3.0.3",
     "plotnine>=0.15.7",
     "pybind11>=3.0.4",
-    "redlines[nupunkt]>=0.6.1",
     "tqdm>=4.68.4",
     "typing-extensions>=4.16.0",
 ]
 
-[project.scripts]
-wavefront-local = "wavefront_local:main"
+[tool.uv]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "cpp/src/**/*.{h,c,hpp,cpp}" },
+    { file = "src/wavefront_local/lwfa_cpp.cpp" },
+    { file = "CMakeLists.txt"},
+]
 
 [build-system]
-requires = ["uv_build>=0.11.14,<0.12.0"]
-build-backend = "uv_build"
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[dependency-groups]
+dev = [
+    "cibuildwheel",
+]
