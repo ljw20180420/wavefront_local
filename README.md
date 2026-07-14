@@ -55,23 +55,38 @@ It can be prove that this recurrence format keeps the $O(sN)$ time complexity an
 
 # Usage
 
-## Local wavefront alignment (lWFA)
+## c++ library
 
-See this [example](examples/example_lwfa.cpp). To compile and run,
+### Local wavefront alignment (lWFA)
+
+See this [example](examples/example_lwfa.cpp). To compile and run the example,
 ```shell
 $ examples/lwfa.sh
 ```
 
-## Local bidirectional wavefront alignment (lBiWFA)
+### Local bidirectional wavefront alignment (lBiWFA)
 
-See this [example](examples/example_lbiwfa.cpp). To compile and run,
+See this [example](examples/example_lbiwfa.cpp). To compile and run the example,
 ```shell
 $ examples/lbiwfa.sh
 ```
 
-# Python prototypes
+## pybind11 python langauage binding
 
-Python prototypes of the local [`WFA`](src/wavefront_local/wfa.py) and [`BiWFA`](src/wavefront_local/wfa.py) are available. These python prototypes have higher readability than the c++ library. One may learn how lWFA and lBiWFA work by reading these python prototypes.
+There are four functions.
+
+- `wavefront_local._core.cpplwfa`
+- `wavefront_local._core.cpplbiwfa`
+- `wavefront_local.pylwfa`
+- `wavefront_local.pylbiwfa`
+
+All functions have the same signature, see the [example](examples/example.py). To run the example,
+```shell
+$ examples/example.py
+```
+- `cpplwfa` implements the wavefront alignment in the local scope.
+- `cpplbiwfa` implements the bidirectional wavefront alignment in the local scope. It use the least time and space (even faster than `cpplwfa`).
+- `pylwfa` and `pylbiwfa` are python prototypes. These have higher readability than the c++ library. One may learn how lWFA and lBiWFA work by reading these python prototypes.
 
 # Citation
 

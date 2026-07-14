@@ -9,10 +9,9 @@ find_package(pybind11 CONFIG REQUIRED)
 file(GLOB CPP_SOURCES CONFIGURE_DEPENDS "cpp/src/*.cpp")
 
 pybind11_add_module(
-    lwfa_cpp MODULE
-    src/wavefront_local/lwfa_cpp.cpp
+    _core MODULE
     ${CPP_SOURCES}
 )
-target_include_directories(lwfa_cpp PRIVATE cpp)
+target_include_directories(_core PRIVATE cpp)
 
-install(TARGETS lwfa_cpp DESTINATION ${SKBUILD_PROJECT_NAME})
+install(TARGETS _core DESTINATION ${SKBUILD_PROJECT_NAME})

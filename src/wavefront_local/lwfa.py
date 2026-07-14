@@ -34,7 +34,7 @@ class Cell:
             self.source_d = source_d
 
 
-def wfa(
+def lwfa(
     q: memoryview,
     t: memoryview,
     x: int,

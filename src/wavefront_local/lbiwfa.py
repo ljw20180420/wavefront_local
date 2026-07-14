@@ -3,8 +3,8 @@ from collections import defaultdict
 from enum import Enum, auto
 from typing import Literal
 
+from .lwfa import lwfa, track
 from .utils import extend
-from .wfa import track, wfa
 
 
 def next(
@@ -124,7 +124,7 @@ class Split(Enum):
     PATH = auto()
 
 
-def biwfa(
+def lbiwfa(
     q: memoryview,
     t: memoryview,
     x: int,
@@ -206,28 +206,28 @@ def biwfa(
     m = (f_t - d_t) // 2
     if split == Split.FORWARD_JUMP:
         if score_upper_t <= p:
-            s_w, d_w, Fr = wfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
+            s_w, d_w, Fr = lwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
             aln_upper = track("M", s_w, d_w, Fr)
         else:
-            aln_upper = biwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
+            aln_upper = lbiwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
         aln_lower = "S" * (len(q) - n) + "N" * (len(t) - m)
     elif split == Split.REVERSE_JUMP:
         if score_lower_t <= p:
-            s_w, d_w, Fr = wfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
+            s_w, d_w, Fr = lwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
             aln_lower = track(c_r, s_w, d_w, Fr)
         else:
-            aln_lower = biwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
+            aln_lower = lbiwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
         aln_upper = "S" * n + "N" * m
     else:
         if score_upper_t <= p:
-            s_w, d_w, Fr = wfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
+            s_w, d_w, Fr = lwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
             aln_upper = track(c_t, s_w, d_w, Fr)
         else:
-            aln_upper = biwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
+            aln_upper = lbiwfa(q[:n], t[:m], x, o, e, j, c_f, c_t)
         if score_lower_t <= p:
-            s_w, d_w, Fr = wfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
+            s_w, d_w, Fr = lwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
             aln_lower = track(c_r, s_w, d_w, Fr)
         else:
-            aln_lower = biwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
+            aln_lower = lbiwfa(q[n:], t[m:], x, o, e, j, c_t, c_r)
 
     return aln_upper + aln_lower

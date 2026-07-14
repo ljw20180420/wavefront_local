@@ -10,7 +10,8 @@ wheels/
 .venv
 
 /test/data
-!/paper/test.ini
+/test/py/align
+
 /paper/benchmark/*
 !/paper/benchmark/result
 !/paper/benchmark.ini
