@@ -88,6 +88,12 @@ $ examples/example.py
 - `cpplbiwfa` implements the bidirectional wavefront alignment in the local scope. It use the least time and space (even faster than `cpplwfa`).
 - `pylwfa` and `pylbiwfa` are python prototypes. These have higher readability than the c++ library. One may learn how lWFA and lBiWFA work by reading these python prototypes.
 
+# Pypi package
+
+```shell
+$ pip install wavefront_local
+```
+
 # Citation
 
 In preparation.
