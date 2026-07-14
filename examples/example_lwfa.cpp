@@ -1,6 +1,6 @@
-#include "../cpp/src/lwfa.hpp"
-#include "../cpp/src/score.hpp"
-#include "../cpp/src/system.hpp"
+#include "src/lwfa.hpp"
+#include "src/score.hpp"
+#include "src/system.hpp"
 #include <algorithm>
 #include <iostream>
 

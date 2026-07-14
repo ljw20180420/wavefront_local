@@ -13,6 +13,7 @@ dependencies = [
     "numpy>=2.4.6",
     "pandas>=3.0.3",
     "plotnine>=0.15.7",
+    "pybind11>=3.0.4",
     "redlines[nupunkt]>=0.6.1",
     "tqdm>=4.68.4",
     "typing-extensions>=4.16.0",

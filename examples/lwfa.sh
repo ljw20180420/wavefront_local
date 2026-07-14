@@ -8,6 +8,7 @@ cd ..
 g++ -O3 -std=gnu++23 \
     examples/example_lwfa.cpp \
     cpp/src/*.cpp \
+    -I cpp \
     -o examples/example_lwfa
 
 examples/example_lwfa

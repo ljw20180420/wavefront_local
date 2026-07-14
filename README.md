@@ -90,7 +90,6 @@ In preparation.
 - [ ] find sota library for efficient implementaion
   - [ ] bit vector for recording alignment
   - [ ] efficient sparse matrix
-- [ ] auto simd
 - [ ] manual simd
 - [ ] webassembly
 - [ ] python binding

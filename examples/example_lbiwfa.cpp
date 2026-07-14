@@ -1,6 +1,6 @@
-#include "../cpp/src/lbiwfa.hpp"
-#include "../cpp/src/score.hpp"
-#include "../cpp/src/system.hpp"
+#include "src/lbiwfa.hpp"
+#include "src/score.hpp"
+#include "src/system.hpp"
 #include <iostream>
 
 int main(int argc, char **argv)
