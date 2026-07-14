@@ -12,7 +12,7 @@ os.chdir(pathlib.Path(__file__).resolve().parent)
 
 cfg = read_ini("test.ini")
 
-test_data_dir = pathlib.Path("test/data")
+test_data_dir = pathlib.Path("data")
 size = cfg["size"][0]
 seed = cfg["seed"][0]
 for mode in cfg["mode"]:

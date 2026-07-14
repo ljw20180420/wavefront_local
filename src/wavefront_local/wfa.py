@@ -4,7 +4,7 @@ from typing import Literal
 
 import numpy as np
 
-from . import extend
+from .utils import extend
 
 
 class Cell:
