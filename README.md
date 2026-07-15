@@ -38,7 +38,7 @@ then we recover the relation between the global-scope WFA scoring system and the
 2s_c + s_w = l_c(M + N)
 ```
 
-# Recurrence of wavefront components in the local alignemnt scope
+# Recurrence of wavefront components in the local alignment scope
 
 The recurrence of wavefront components for the wavefront alignment in the local scope (lWFA) is
 ```math
