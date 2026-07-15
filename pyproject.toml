@@ -1,6 +1,6 @@
 [project]
 name = "wavefront-local"
-version = "0.1.2"
+version = "0.1.3"
 description = "Wavefront alignment for the local alignment scope."
 readme = "README.md"
 authors = [
