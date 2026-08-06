@@ -24,38 +24,35 @@ private:
     int32_t invalid_num;             // the number of accumulated invalid offset, either out of bound or offset is -1 (does not exist)
 
 public:
-    int32_t extend(const int32_t n, const int32_t m)
+    const int32_t extend(int32_t n, int32_t m)
     {
-        int32_t M = t.size();
-        int32_t N = q.size();
-        int32_t mu = 0;
-        while (std::cmp_less(n + mu, N) && std::cmp_less(m + mu, M))
+        const int32_t M = t.size();
+        const int32_t N = q.size();
+        if (orientation == 'F')
         {
-            int32_t n_, m_;
-            if (orientation == 'F')
+            const int32_t n_o = n;
+            for (; std::cmp_less(n, N) && std::cmp_less(m, M) && q[n] == t[m]; ++n, ++m)
             {
-                n_ = n + mu;
-                m_ = m + mu;
             }
-            else
-            {
-                // orientation == 'R'
-                n_ = N - n - mu - 1;
-                m_ = M - m - mu - 1;
-            }
-            if (q[n_] != t[m_])
-            {
-                break;
-            }
-            ++mu;
+            return n - n_o;
         }
-        return mu;
+        else
+        {
+            // orientation == 'R'
+            n = N - n - 1;
+            m = M - m - 1;
+            const int32_t n_o = n;
+            for (; std::cmp_greater_equal(n, 0) && std::cmp_greater_equal(m, 0) && q[n] == t[m]; --n, --m)
+            {
+            }
+            return n_o - n;
+        }
     }
 
-    void push(int32_t idx, int32_t d, int32_t f)
+    void push(const int32_t idx, const int32_t d, const int32_t f)
     {
-        int32_t M = t.size();
-        int32_t N = q.size();
+        const int32_t M = t.size();
+        const int32_t N = q.size();
         BiRow &birow = birows[idx];
         if (f < 0)
         {
@@ -66,8 +63,8 @@ public:
         }
         else
         {
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
+            const int32_t n = (f + d) / 2;
+            const int32_t m = (f - d) / 2;
             if (std::cmp_greater(birow.dl, N))
             {
                 if (std::cmp_less_equal(n, N) && std::cmp_less_equal(m, M))

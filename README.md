@@ -104,6 +104,23 @@ In preparation.
 # TODO
 
 ```
+- The SeqAn3 Fix: SeqAn3 introduces highly optimized, native low-bit alphabets like seqan3::dna4 (which uses only 2 bits per base to represent A, C, G, T) and seqan3::dna5
+- The SeqAn3 Fix: SeqAn3 handles dynamic programming matrices by utilizing specialized allocation stripes and structures that recycle memory buffers. Instead of allocating massive 2>
+- 检查benchmakr计时方法
+- 用氨基酸
+- lbiwfa give up O(s) space by O(n) space
+- bit vector for cache
+- template for metaprogramming
+- add cr cf to template and select template by if else
+- metaprogramming
+- concepts
+- No Virtual Function
+- zero-overhead abstractions
+- compact custom alphabets
+- aggressive compiler optimizations
+  - inline expansion
+  - loop unrolling
+
 - [ ] Skip useless jumping at diagonals which have been passed by previous low-score waves. This prevent redundant extension, thereby the time complexity no longer depends on x.
   - Prove the correctness of skipping useless jumping as follows.
     - The optimal score keep.
