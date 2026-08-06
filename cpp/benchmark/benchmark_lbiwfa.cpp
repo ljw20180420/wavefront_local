@@ -23,20 +23,17 @@ int main(int argc, char **argv)
     std::string err_num = argv[2];
     std::string end_up = argv[3];
 
-    auto [l_c, x_c, o_c, e_c] = bowtie_score;
-    auto [x, o, e, j] = score_system_canonical2wavefront(l_c, x_c, o_c, e_c);
     char c_f = 'L';
     char c_r = 'L';
 
     double total_time = 0.0;
 
-    int32_t p = std::max(x, o + e);
-    BiFront FrM_f('M', p + 1, 'F');
-    BiFront FrI_f('I', p + 1, 'F');
-    BiFront FrD_f('D', p + 1, 'F');
-    BiFront FrM_r('M', p + 1, 'R');
-    BiFront FrI_r('I', p + 1, 'R');
-    BiFront FrD_r('D', p + 1, 'R');
+    BiFront FrM_f('M', bowtie_wfa.p + 1, 'F');
+    BiFront FrI_f('I', bowtie_wfa.p + 1, 'F');
+    BiFront FrD_f('D', bowtie_wfa.p + 1, 'F');
+    BiFront FrM_r('M', bowtie_wfa.p + 1, 'R');
+    BiFront FrI_r('I', bowtie_wfa.p + 1, 'R');
+    BiFront FrD_r('D', bowtie_wfa.p + 1, 'R');
     FrontXM FrXM;
     Front FrI, FrD;
     std::string aln;
@@ -62,13 +59,14 @@ int main(int argc, char **argv)
 
         aln.resize(t.size() + q.size());
 
-        auto start = std::chrono::steady_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
-        char *aln_t = lbiwfa(q, t, x, o, e, j, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
         aln.resize(aln_t - aln.data());
-        int32_t s_t = eval_score(aln, q, t, x, o, e, j);
+        int32_t s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
+        doNotOptimize(s_t);
 
-        auto end = std::chrono::steady_clock::now();
+        auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
 
         total_time += elapsed.count();

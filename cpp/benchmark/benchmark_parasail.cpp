@@ -48,24 +48,27 @@ int main(int argc, char **argv)
         std::getline(ss, q);
 
         parasail_matrix_t *matrix = parasail_matrix_create("ACGT", l_c, -x_c);
+        parasail_result_t *result = nullptr;
 
-        auto start = std::chrono::steady_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         if (method == "striped")
         {
-            parasail_result_t *result = parasail_sw_trace_striped_32(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
+            result = parasail_sw_trace_striped_sat(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
         }
         else if (method == "scan")
         {
-            parasail_result_t *result = parasail_sw_trace_scan_32(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
+            result = parasail_sw_trace_scan_sat(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
         }
         else
         {
             // method == "diag"
-            parasail_result_t *result = parasail_sw_trace_diag_32(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
+            result = parasail_sw_trace_diag_sat(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
         }
 
-        auto end = std::chrono::steady_clock::now();
+        doNotOptimize(result);
+
+        auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
 
         total_time += elapsed.count();

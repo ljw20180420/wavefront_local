@@ -65,13 +65,22 @@ int main(int argc, char **argv)
                           seqan3::align_cfg::open_score{-o_c},
                           seqan3::align_cfg::extension_score{-e_c}};
 
-        auto start = std::chrono::steady_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         // Invoke the pairwise alignment which returns a lazy range over alignment results.
         auto results = seqan3::align_pairwise(std::tie(s1, s2), config);
         auto &res = *results.begin();
+        auto const &[gapped_s1, gapped_s2] = res.alignment();
+        // Include this because seqan3 lazily skip the backtrack if the actually alignment is not accessed.
+        auto view1 = gapped_s1 | seqan3::views::to_char;
+        auto view2 = gapped_s2 | seqan3::views::to_char;
+        std::string str1{std::ranges::begin(view1), std::ranges::end(view1)};
+        std::string str2{std::ranges::begin(view2), std::ranges::end(view2)};
 
-        auto end = std::chrono::steady_clock::now();
+        doNotOptimize(str1);
+        doNotOptimize(str2);
+
+        auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
 
         total_time += elapsed.count();

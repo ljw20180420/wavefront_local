@@ -16,15 +16,19 @@ parse_ini() {
     ' paper/benchmark.ini
 }
 
+compile_lwfa() {
+    g++ -O3 -std=gnu++23 \
+        cpp/benchmark/benchmark_lwfa.cpp \
+        cpp/src/*.cpp \
+        -o cpp/benchmark/benchmark_lwfa
+}
+
 benchmark_lwfa() {
     local lengths=$1
     local err_nums=$2
     local end_ups=$3
 
-    g++ -O3 -std=gnu++23 \
-        cpp/benchmark/benchmark_lwfa.cpp \
-        cpp/src/*.cpp \
-        -o cpp/benchmark/benchmark_lwfa
+    compile_lwfa
 
     mkdir -p paper/benchmark/result
     printf "length,err_num,end_up,time,memory\n" \
@@ -41,15 +45,19 @@ benchmark_lwfa() {
     done
 }
 
+compile_lbiwfa() {
+    g++ -O3 -std=gnu++23 \
+        cpp/benchmark/benchmark_lbiwfa.cpp \
+        cpp/src/*.cpp \
+        -o cpp/benchmark/benchmark_lbiwfa
+}
+
 benchmark_lbiwfa() {
     local lengths=$1
     local err_nums=$2
     local end_ups=$3
 
-    g++ -O3 -std=gnu++23 \
-        cpp/benchmark/benchmark_lbiwfa.cpp \
-        cpp/src/*.cpp \
-        -o cpp/benchmark/benchmark_lbiwfa
+    compile_lbiwfa
 
     mkdir -p paper/benchmark/result
     printf "length,err_num,end_up,time,memory\n" \
@@ -121,13 +129,14 @@ benchmark_seqan() {
     done
 }
 
-
+# compile_lwfa
+# compile_lbiwfa
 lengths=$(parse_ini length)
 err_nums=$(parse_ini err_num)
 end_ups=$(parse_ini end_up)
-benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
-benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
-benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" diag
-benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" striped
-benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" scan
+# benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
+# benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
+# benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" diag
+# benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" striped
+# benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" scan
 benchmark_seqan "${lengths}" "${err_nums}" "${end_ups}"

@@ -45,19 +45,6 @@ int main(int argc, char **argv)
     for (const auto score_schema_name_ : cfg["score_schema"])
     {
         std::string score_schema_name = std::get<std::string>(score_schema_name_);
-        ScoreCanonical score_schema;
-        if (score_schema_name == "bowtie")
-        {
-            score_schema = bowtie_score;
-        }
-        else
-        {
-            // score_schema_name == "bwa"
-            score_schema = bwa_score;
-        }
-        auto [l_c, x_c, o_c, e_c] = score_schema;
-        auto [x, o, e, j] = score_system_canonical2wavefront(l_c, x_c, o_c, e_c);
-
         for (const auto end_up_ : cfg["end_up"])
         {
             int32_t end_up = std::get<int>(end_up_);
@@ -86,16 +73,6 @@ int main(int argc, char **argv)
                         std::string python_file = "test/py/align/pylwfa/" + score_schema_name + '/' + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
                         std::vector<int32_t> s_ts = get_python_wavefront_score(python_file);
 
-                        int32_t p = std::max(x, o + e);
-                        BiFront FrM_f('M', p + 1, 'F');
-                        BiFront FrI_f('I', p + 1, 'F');
-                        BiFront FrD_f('D', p + 1, 'F');
-                        BiFront FrM_r('M', p + 1, 'R');
-                        BiFront FrI_r('I', p + 1, 'R');
-                        BiFront FrD_r('D', p + 1, 'R');
-                        FrontXM FrXM;
-                        Front FrI, FrD;
-
                         std::string test_file = "test/data/" + std::string(mode) + '/' + std::to_string(length) + '_' + err + '_' + std::to_string(end_up) + ".csv";
 
                         std::cerr << test_file << ": " << total_time << " ms\n";
@@ -121,9 +98,38 @@ int main(int argc, char **argv)
 
                             auto start = std::chrono::steady_clock::now();
 
-                            char *aln_t = lbiwfa(q, t, x, o, e, j, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
-                            aln.resize(aln_t - aln.data());
-                            int32_t s_t = eval_score(aln, q, t, x, o, e, j);
+                            char *aln_t;
+                            int32_t s_t;
+                            if (score_schema_name == "bowtie")
+                            {
+                                BiFront FrM_f('M', bowtie_wfa.p + 1, 'F');
+                                BiFront FrI_f('I', bowtie_wfa.p + 1, 'F');
+                                BiFront FrD_f('D', bowtie_wfa.p + 1, 'F');
+                                BiFront FrM_r('M', bowtie_wfa.p + 1, 'R');
+                                BiFront FrI_r('I', bowtie_wfa.p + 1, 'R');
+                                BiFront FrD_r('D', bowtie_wfa.p + 1, 'R');
+                                FrontXM FrXM;
+                                Front FrI, FrD;
+                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln.resize(aln_t - aln.data());
+                                s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
+                            }
+                            else
+                            {
+                                // score_schema_name == "bwa"
+                                BiFront FrM_f('M', bwa_wfa.p + 1, 'F');
+                                BiFront FrI_f('I', bwa_wfa.p + 1, 'F');
+                                BiFront FrD_f('D', bwa_wfa.p + 1, 'F');
+                                BiFront FrM_r('M', bwa_wfa.p + 1, 'R');
+                                BiFront FrI_r('I', bwa_wfa.p + 1, 'R');
+                                BiFront FrD_r('D', bwa_wfa.p + 1, 'R');
+                                FrontXM FrXM;
+                                Front FrI, FrD;
+                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln.resize(aln_t - aln.data());
+                                s_t = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
+                            }
+
                             if (s_t != *it)
                             {
                                 std::cerr << "score not equal to python version\n"
