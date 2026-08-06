@@ -18,18 +18,12 @@ template <char c, int32_t p, char orientation>
 class BiFront
 {
 private:
-    std::string_view t;        // text
-    std::string_view q;        // query
-    std::vector<BiRow> birows; // row information
-    int32_t invalid_num;       // the number of accumulated invalid offset, either out of bound or offset is -1 (does not exist)
+    std::string_view t;              // text
+    std::string_view q;              // query
+    std::array<BiRow, p + 1> birows; // row information
+    int32_t invalid_num;             // the number of accumulated invalid offset, either out of bound or offset is -1 (does not exist)
 
 public:
-    BiFront()
-    {
-        birows.resize(p + 1);
-        birows.shrink_to_fit();
-    }
-
     int32_t extend(const int32_t n, const int32_t m)
     {
         int32_t M = t.size();
