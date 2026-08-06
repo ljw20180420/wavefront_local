@@ -13,7 +13,8 @@
 #include <tuple>
 #include <functional>
 
-int32_t loop_minus(int32_t idx, int32_t gap, int32_t s, int32_t p)
+template <int32_t gap, int32_t p>
+int32_t loop_minus(int32_t idx, int32_t s)
 {
     int32_t idx_ = idx - gap;
     if (std::cmp_less_equal(s, gap) || std::cmp_greater_equal(idx_, 0))
@@ -23,7 +24,19 @@ int32_t loop_minus(int32_t idx, int32_t gap, int32_t s, int32_t p)
     return idx_ + p + 1;
 }
 
-int32_t loop_next(int32_t idx, int32_t p)
+template <int32_t p>
+int32_t loop_minus(int32_t idx, int32_t s, int32_t gap)
+{
+    int32_t idx_ = idx - gap;
+    if (std::cmp_less_equal(s, gap) || std::cmp_greater_equal(idx_, 0))
+    {
+        return idx_;
+    }
+    return idx_ + p + 1;
+}
+
+template <int32_t p>
+int32_t loop_next(int32_t idx)
 {
     ++idx;
     if (std::cmp_greater(idx, p))
@@ -33,13 +46,13 @@ int32_t loop_next(int32_t idx, int32_t p)
     return idx;
 }
 
-template <int32_t p, char orientation>
-void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', p, orientation> &FrI, BiFront<'D', p, orientation> &FrD, int32_t s, int32_t idx, int32_t x, int32_t o, int32_t e, int32_t j, char c)
+template <int32_t x, int32_t o, int32_t e, int32_t j, int32_t p, char orientation>
+void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', p, orientation> &FrI, BiFront<'D', p, orientation> &FrD, int32_t s, int32_t idx, char c)
 {
     bool jump = std::cmp_equal(s % j, 0);
-    int32_t idx_x = loop_minus(idx, x, s, p);
-    int32_t idx_e = loop_minus(idx, e, s, p);
-    int32_t idx_o = loop_minus(idx, o + e, s, p);
+    int32_t idx_x = loop_minus<x, p>(idx, s);
+    int32_t idx_e = loop_minus<e, p>(idx, s);
+    int32_t idx_o = loop_minus<o + e, p>(idx, s);
     if (std::cmp_greater_equal(s, e))
     {
         int32_t Mdl, Mdu;
@@ -139,8 +152,8 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
     }
 }
 
-template <int32_t p, char orientation>
-std::tuple<int32_t, int32_t, int32_t, char> try_jump(BiFront<'M', p, orientation> &FrM, int32_t s, int32_t idx, int32_t j, int32_t M, int32_t N)
+template <int32_t j, int32_t p, char orientation>
+std::tuple<int32_t, int32_t, int32_t, char> try_jump(BiFront<'M', p, orientation> &FrM, int32_t s, int32_t idx, int32_t M, int32_t N)
 {
     if (FrM.wave_size(idx) == 0)
     {
@@ -165,12 +178,11 @@ std::tuple<int32_t, int32_t, int32_t, char> try_jump(BiFront<'M', p, orientation
     return std::make_tuple(s_b, d_b, f_b, 'M');
 }
 
-template <char c, int32_t p, char orientation1, char orientation2>
+template <char c, int32_t o, int32_t p, char orientation1, char orientation2>
 std::tuple<int32_t, int32_t, int32_t, char> overlap_c(BiFront<c, p, orientation1> &Fr, BiFront<c, p, orientation2> &Fr2, int32_t s,
                                                       int32_t idx,
                                                       int32_t s2l,
                                                       int32_t s2u,
-                                                      int32_t o,
                                                       int32_t M,
                                                       int32_t N)
 {
@@ -181,7 +193,7 @@ std::tuple<int32_t, int32_t, int32_t, char> overlap_c(BiFront<c, p, orientation1
     int32_t du = dl + Fr.wave_size(idx);
     for (int32_t s2 = s2l; s2 < s2u; ++s2)
     {
-        int32_t idx2 = loop_minus(idx, s - s2, s, p);
+        int32_t idx2 = loop_minus<p>(idx, s, s - s2);
         int32_t d2l = Fr2.dl(idx2);
         int32_t d2u = d2l + Fr2.wave_size(idx2);
         for (int32_t d = std::max(dl, N - M - d2u + 1); std::cmp_less(d, std::min(du, N - M - d2l + 1)); ++d)
@@ -210,7 +222,7 @@ std::tuple<int32_t, int32_t, int32_t, char> overlap_c(BiFront<c, p, orientation1
     return std::make_tuple(s_b, d_b, f_b, c_b);
 }
 
-template <int32_t p, char orientation1, char orientation2>
+template <int32_t o, int32_t p, char orientation1, char orientation2>
 std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
     BiFront<'M', p, orientation1> &FrM,
     BiFront<'I', p, orientation1> &FrI,
@@ -222,7 +234,6 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
     int32_t idx,
     int32_t s2l,
     int32_t s2u,
-    int32_t o,
     int32_t M,
     int32_t N)
 {
@@ -230,7 +241,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
     int32_t d_b, f_b;
     char c_b;
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c(FrM, FrM2, s, idx, s2l, s2u, o, M, N);
+        auto [s_c, d_c, f_c, c_c] = overlap_c<'M', o, p, orientation1, orientation2>(FrM, FrM2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -240,7 +251,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
         }
     }
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c(FrI, FrI2, s, idx, s2l, s2u, o, M, N);
+        auto [s_c, d_c, f_c, c_c] = overlap_c<'I', o, p, orientation1, orientation2>(FrI, FrI2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -250,7 +261,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
         }
     }
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c(FrD, FrD2, s, idx, s2l, s2u, o, M, N);
+        auto [s_c, d_c, f_c, c_c] = overlap_c<'D', o, p, orientation1, orientation2>(FrD, FrD2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -318,10 +329,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
     char split; // F (forward jump) or R (reverse jump) or P (path)
     while (std::cmp_less(2 * s - o - p, s_t))
     {
-        next(N, M, FrM_f, FrI_f, FrD_f, s, idx, x, o, e, j, c_f);
+        next<x, o, e, j, p, 'F'>(N, M, FrM_f, FrI_f, FrD_f, s, idx, c_f);
         if (c_r == 'L')
         {
-            auto [s_b, d_b, f_b, c_b] = try_jump(FrM_f, s, idx, j, M, N);
+            auto [s_b, d_b, f_b, c_b] = try_jump<j, p, 'F'>(FrM_f, s, idx, M, N);
             if (std::cmp_less(s_b, s_t))
             {
                 s_t = s_b;
@@ -332,10 +343,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
                 split = 'F';
             }
         }
-        next(N, M, FrM_r, FrI_r, FrD_r, s, idx, x, o, e, j, c_r);
+        next<x, o, e, j, p, 'R'>(N, M, FrM_r, FrI_r, FrD_r, s, idx, c_r);
         if (c_f == 'L')
         {
-            auto [s_b, d_b, f_b, c_b] = try_jump(FrM_r, s, idx, j, M, N);
+            auto [s_b, d_b, f_b, c_b] = try_jump<j, p, 'R'>(FrM_r, s, idx, M, N);
             if (std::cmp_less(s_b, s_t))
             {
                 d_b = N - M - d_b;
@@ -365,7 +376,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         if (anti_diag_upper + anti_diag_lower >= M + N)
         {
             {
-                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap(FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, s, idx, s - p, s, o, M, N);
+                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p, 'F', 'R'>(FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, s, idx, s - p, s, M, N);
                 if (s_b < s_t)
                 {
                     s_t = s_b;
@@ -378,7 +389,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
                 }
             }
             {
-                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap(FrM_r, FrI_r, FrD_r, FrM_f, FrI_f, FrD_f, s, idx, s - p, s + 1, o, M, N);
+                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap<o, p, 'R', 'F'>(FrM_r, FrI_r, FrD_r, FrM_f, FrI_f, FrD_f, s, idx, s - p, s + 1, M, N);
                 if (s_b < s_t)
                 {
                     d_b = N - M - d_b;
@@ -395,7 +406,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
 
         ++s;
-        idx = loop_next(idx, p);
+        idx = loop_next<p>(idx);
         FrM_f.reset_row(idx);
         FrI_f.reset_row(idx);
         FrD_f.reset_row(idx);
