@@ -153,11 +153,11 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
 }
 
 template <int32_t j, int32_t p, char orientation>
-std::tuple<int32_t, int32_t, int32_t, char> try_jump(BiFront<'M', p, orientation> &FrM, int32_t s, int32_t idx, int32_t M, int32_t N)
+std::tuple<int32_t, int32_t, int32_t> try_jump(BiFront<'M', p, orientation> &FrM, int32_t s, int32_t idx, int32_t M, int32_t N)
 {
     if (FrM.wave_size(idx) == 0)
     {
-        return std::make_tuple(std::numeric_limits<int32_t>::max(), -1, -1, -1);
+        return std::make_tuple(std::numeric_limits<int32_t>::max(), -1, -1);
     }
 
     int32_t d_b, s_b;
@@ -175,20 +175,19 @@ std::tuple<int32_t, int32_t, int32_t, char> try_jump(BiFront<'M', p, orientation
         }
     }
 
-    return std::make_tuple(s_b, d_b, f_b, 'M');
+    return std::make_tuple(s_b, d_b, f_b);
 }
 
 template <char c, int32_t o, int32_t p, char orientation1, char orientation2>
-std::tuple<int32_t, int32_t, int32_t, char> overlap_c(BiFront<c, p, orientation1> &Fr, BiFront<c, p, orientation2> &Fr2, int32_t s,
-                                                      int32_t idx,
-                                                      int32_t s2l,
-                                                      int32_t s2u,
-                                                      int32_t M,
-                                                      int32_t N)
+std::tuple<int32_t, int32_t, int32_t> overlap_c(BiFront<c, p, orientation1> &Fr, BiFront<c, p, orientation2> &Fr2, int32_t s,
+                                                int32_t idx,
+                                                int32_t s2l,
+                                                int32_t s2u,
+                                                int32_t M,
+                                                int32_t N)
 {
     int32_t s_b = std::numeric_limits<int32_t>::max();
     int32_t d_b, f_b;
-    char c_b;
     int32_t dl = Fr.dl(idx);
     int32_t du = dl + Fr.wave_size(idx);
     for (int32_t s2 = s2l; s2 < s2u; ++s2)
@@ -213,13 +212,12 @@ std::tuple<int32_t, int32_t, int32_t, char> overlap_c(BiFront<c, p, orientation1
                     s_b = new_score;
                     d_b = d;
                     f_b = f;
-                    c_b = c;
                 }
             }
         }
     }
 
-    return std::make_tuple(s_b, d_b, f_b, c_b);
+    return std::make_tuple(s_b, d_b, f_b);
 }
 
 template <int32_t o, int32_t p, char orientation1, char orientation2>
@@ -239,35 +237,35 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
 {
     int32_t s_b = std::numeric_limits<int32_t>::max();
     int32_t d_b, f_b;
-    char c_b;
+    char c_b = '\0';
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c<'M', o, p, orientation1, orientation2>(FrM, FrM2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<'M', o, p, orientation1, orientation2>(FrM, FrM2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
             d_b = d_c;
             f_b = f_c;
-            c_b = c_c;
+            c_b = 'M';
         }
     }
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c<'I', o, p, orientation1, orientation2>(FrI, FrI2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<'I', o, p, orientation1, orientation2>(FrI, FrI2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
             d_b = d_c;
             f_b = f_c;
-            c_b = c_c;
+            c_b = 'I';
         }
     }
     {
-        auto [s_c, d_c, f_c, c_c] = overlap_c<'D', o, p, orientation1, orientation2>(FrD, FrD2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<'D', o, p, orientation1, orientation2>(FrD, FrD2, s, idx, s2l, s2u, M, N);
         if (s_c < s_b)
         {
             s_b = s_c;
             d_b = d_c;
             f_b = f_c;
-            c_b = c_c;
+            c_b = 'D';
         }
     }
     int32_t score_upper = s;
@@ -322,7 +320,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
     int32_t idx = 0;
     int32_t s_t = std::numeric_limits<int32_t>::max();
     int32_t d_t, f_t;
-    char c_t;
+    char c_t = '\0';
     int32_t anti_diag_upper = -1;
     int32_t anti_diag_lower = -1;
     int32_t score_upper_t, score_lower_t;
@@ -332,13 +330,12 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         next<x, o, e, j, p, 'F'>(N, M, FrM_f, FrI_f, FrD_f, s, idx, c_f);
         if (c_r == 'L')
         {
-            auto [s_b, d_b, f_b, c_b] = try_jump<j, p, 'F'>(FrM_f, s, idx, M, N);
+            auto [s_b, d_b, f_b] = try_jump<j, p, 'F'>(FrM_f, s, idx, M, N);
             if (std::cmp_less(s_b, s_t))
             {
                 s_t = s_b;
                 d_t = d_b;
                 f_t = f_b;
-                c_t = c_b;
                 score_upper_t = s;
                 split = 'F';
             }
@@ -346,7 +343,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         next<x, o, e, j, p, 'R'>(N, M, FrM_r, FrI_r, FrD_r, s, idx, c_r);
         if (c_f == 'L')
         {
-            auto [s_b, d_b, f_b, c_b] = try_jump<j, p, 'R'>(FrM_r, s, idx, M, N);
+            auto [s_b, d_b, f_b] = try_jump<j, p, 'R'>(FrM_r, s, idx, M, N);
             if (std::cmp_less(s_b, s_t))
             {
                 d_b = N - M - d_b;
@@ -354,7 +351,6 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
                 s_t = s_b;
                 d_t = d_b;
                 f_t = f_b;
-                c_t = c_b;
                 score_lower_t = s;
                 split = 'R';
             }
@@ -419,11 +415,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
     int32_t m = (f_t - d_t) / 2;
     if (split == 'F')
     {
-        char c_r = c_t;
         if (score_upper_t <= p)
         {
-            auto [s_t, d_t, f_t] = lwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, c_r, FrXM, FrI, FrD);
-            std::string aln = track<x, o, e, j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, m, n);
+            auto [s_t, d_t, f_t] = lwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, 'M', FrXM, FrI, FrD);
+            std::string aln = track<x, o, e, j>(c_f, 'M', s_t, d_t, f_t, FrXM, FrI, FrD, m, n);
             for (auto it = aln.rbegin(); it != aln.rend(); ++it, ++aln_t)
             {
                 *aln_t = *it;
@@ -431,7 +426,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, 'M', FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
         }
         std::memset(aln_t, 'S', N - n);
         aln_t += N - n;
@@ -444,11 +439,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         aln_t += n;
         std::memset(aln_t, 'N', m);
         aln_t += m;
-        char c_f = c_t;
         if (score_lower_t <= p)
         {
-            auto [s_t, d_t, f_t] = lwfa<x, o, e, j>(q.substr(n), t.substr(m), c_f, c_r, FrXM, FrI, FrD);
-            std::string aln = track<x, o, e, j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, M - m, N - n);
+            auto [s_t, d_t, f_t] = lwfa<x, o, e, j>(q.substr(n), t.substr(m), 'M', c_r, FrXM, FrI, FrD);
+            std::string aln = track<x, o, e, j>('M', c_r, s_t, d_t, f_t, FrXM, FrI, FrD, M - m, N - n);
             for (auto it = aln.rbegin(); it != aln.rend(); ++it, ++aln_t)
             {
                 *aln_t = *it;
@@ -456,7 +450,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(n), t.substr(m), c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j>(q.substr(n), t.substr(m), 'M', c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
         }
     }
     else
