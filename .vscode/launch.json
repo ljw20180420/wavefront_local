@@ -21,6 +21,11 @@
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
+                    "ignoreFailures": true
                 }
             ],
             "preLaunchTask": "test ini",
@@ -46,6 +51,11 @@
                 {
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
                     "ignoreFailures": true
                 }
             ],
@@ -73,6 +83,11 @@
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
+                    "ignoreFailures": true
                 }
             ],
             "preLaunchTask": "test lbiwfa",
@@ -98,6 +113,11 @@
                 {
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
                     "ignoreFailures": true
                 }
             ],
@@ -125,6 +145,11 @@
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
+                    "ignoreFailures": true
                 }
             ],
             "preLaunchTask": "benchmark lbiwfa",
@@ -151,6 +176,11 @@
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
                     "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
+                    "ignoreFailures": true
                 }
             ],
             "preLaunchTask": "benchmark parasail",
@@ -176,6 +206,11 @@
                 {
                     "description": "Set Disassembly Flavor to Intel",
                     "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Clear debuginfod URLs",
+                    "text": "set debuginfod urls ",
                     "ignoreFailures": true
                 }
             ],
