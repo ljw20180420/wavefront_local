@@ -13,6 +13,15 @@
 #include <tuple>
 #include <functional>
 
+bool legal_df(const int32_t d, const int32_t f, const int32_t N, const int32_t M)
+{
+    if (f < 0 || std::cmp_greater(f + d, 2 * N) || std::cmp_greater(f - d, 2 * M))
+    {
+        return false;
+    }
+    return true;
+}
+
 template <int32_t gap, int32_t p>
 int32_t loop_minus(int32_t idx, int32_t s)
 {
@@ -79,6 +88,10 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
         for (int32_t d = dl; std::cmp_less(d, du); ++d)
         {
             int32_t f = std::max(FrI.f(idx_e, d - 1) + 1, FrM.f(idx_o, d - 1) + 1);
+            if (!legal_df(d, f, N, M))
+            {
+                continue;
+            }
             FrI.push(idx, d, f);
         }
 
@@ -99,6 +112,10 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
         for (int32_t d = dl; std::cmp_less(d, du); ++d)
         {
             int32_t f = std::max(FrD.f(idx_e, d + 1) + 1, FrM.f(idx_o, d + 1) + 1);
+            if (!legal_df(d, f, N, M))
+            {
+                continue;
+            }
             FrD.push(idx, d, f);
         }
     }
@@ -147,6 +164,10 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
         if (c == 'L' && jump && std::cmp_less_equal(Jdl, d) && std::cmp_less(d, Jdu) && std::cmp_equal(d & 1, Jdl & 1))
         {
             f = std::max(s / j, f);
+        }
+        if (!legal_df(d, f, N, M))
+        {
+            continue;
         }
         FrM.push(idx, d, f);
     }

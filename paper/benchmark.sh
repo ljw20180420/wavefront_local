@@ -82,7 +82,6 @@ benchmark_parasail() {
 
     g++ -O3 -std=gnu++23 \
         cpp/benchmark/benchmark_parasail.cpp \
-        cpp/src/*.cpp \
         -L./cpp/parasail/build \
         -lparasail \
         -Wl,-rpath,'$ORIGIN/../parasail/build' \
@@ -111,7 +110,6 @@ benchmark_seqan() {
     g++ -O3 -std=c++23 \
         -Icpp/include \
         cpp/benchmark/benchmark_seqan.cpp \
-        cpp/src/*.cpp \
         -o cpp/benchmark/benchmark_seqan
 
     mkdir -p paper/benchmark/result
