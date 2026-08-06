@@ -7,8 +7,8 @@
 #include <utility>
 #include "front.hpp"
 
-template <int32_t x, int32_t o, int32_t e, int32_t j>
-std::tuple<int32_t, int32_t, int32_t> lwfa(std::string_view q, std::string_view t, const char c_f, const char c_r, FrontXM &FrXM, Front &FrI, Front &FrD)
+template <int32_t x, int32_t o, int32_t e, int32_t j, char c_f, char c_r>
+std::tuple<int32_t, int32_t, int32_t> lwfa(std::string_view q, std::string_view t, FrontXM &FrXM, Front &FrI, Front &FrD)
 {
     int32_t N = q.size();
     int32_t M = t.size();
@@ -174,8 +174,8 @@ std::tuple<int32_t, int32_t, int32_t> lwfa(std::string_view q, std::string_view 
     return std::make_tuple(s_t, d_t, f_t);
 }
 
-template <int32_t x, int32_t o, int32_t e, int32_t j>
-std::string track(const char c_f, const char c_r, const int32_t s_t, const int32_t d_t, const int32_t f_t, FrontXM &FrXM, Front &FrI, Front &FrD, const int32_t M, const int32_t N)
+template <int32_t x, int32_t o, int32_t e, int32_t j, char c_f, char c_r>
+std::string track(const int32_t s_t, const int32_t d_t, const int32_t f_t, FrontXM &FrXM, Front &FrI, Front &FrD, const int32_t M, const int32_t N)
 {
     std::string rev_aln;
     int32_t s_c;
