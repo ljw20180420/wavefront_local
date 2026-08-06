@@ -4,9 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/cpp/src",
+                "${workspaceFolder}/cpp/include",
                 "${workspaceFolder}/.venv/lib/python3.14/site-packages/pybind11/include"
             ],
-            "cppStandard": "c++23"
+            "cppStandard": "gnu++23"
         }
     ],
     "version": 4
