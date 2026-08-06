@@ -129,8 +129,6 @@ benchmark_seqan() {
     done
 }
 
-# compile_lwfa
-# compile_lbiwfa
 lengths=$(parse_ini length)
 err_nums=$(parse_ini err_num)
 end_ups=$(parse_ini end_up)

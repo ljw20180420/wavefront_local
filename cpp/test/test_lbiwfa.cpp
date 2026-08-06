@@ -51,18 +51,6 @@ int main(int argc, char **argv)
             for (auto mode_ : cfg["mode"])
             {
                 std::string mode = std::get<std::string>(mode_);
-                char c_f, c_r;
-                if (mode == "global")
-                {
-                    c_f = 'M';
-                    c_r = 'M';
-                }
-                else
-                {
-                    // mode == "local"
-                    c_f = 'L';
-                    c_r = 'L';
-                }
                 for (auto length_ : cfg["length"])
                 {
                     int32_t length = std::get<int>(length_);
@@ -110,7 +98,15 @@ int main(int argc, char **argv)
                                 BiFront<'D', bowtie_wfa.p, 'R'> FrD_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                if (mode == "global")
+                                {
+                                    aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p, 'M', 'M'>(q, t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                }
+                                else
+                                {
+                                    // mode == "local"
+                                    aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p, 'L', 'L'>(q, t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                }
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
                             }
@@ -125,7 +121,15 @@ int main(int argc, char **argv)
                                 BiFront<'D', bwa_wfa.p, 'R'> FrD_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                if (mode == "global")
+                                {
+                                    aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p, 'M', 'M'>(q, t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                }
+                                else
+                                {
+                                    // mode == "local"
+                                    aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p, 'L', 'L'>(q, t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                }
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
                             }

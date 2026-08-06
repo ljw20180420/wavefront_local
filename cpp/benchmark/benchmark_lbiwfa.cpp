@@ -23,9 +23,6 @@ int main(int argc, char **argv)
     std::string err_num = argv[2];
     std::string end_up = argv[3];
 
-    char c_f = 'L';
-    char c_r = 'L';
-
     double total_time = 0.0;
 
     BiFront<'M', bowtie_wfa.p, 'F'> FrM_f;
@@ -61,7 +58,7 @@ int main(int argc, char **argv)
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p, 'L', 'L'>(q, t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
         aln.resize(aln_t - aln.data());
         int32_t s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
         doNotOptimize(s_t);
