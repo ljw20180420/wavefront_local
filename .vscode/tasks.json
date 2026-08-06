@@ -9,7 +9,6 @@
                 "-g",
                 "-std=gnu++23",
                 "test/test_ini.cpp",
-                "src/ini.cpp",
                 "-o",
                 "test/test_ini"
             ],
@@ -31,7 +30,6 @@
                 "-g",
                 "-std=gnu++23",
                 "test/test_lwfa.cpp",
-                "src/*.cpp",
                 "-o",
                 "test/test_lwfa"
             ],
@@ -53,7 +51,6 @@
                 "-g",
                 "-std=gnu++23",
                 "test/test_lbiwfa.cpp",
-                "src/*.cpp",
                 "-o",
                 "test/test_lbiwfa"
             ],
@@ -75,7 +72,6 @@
                 "-g",
                 "-std=gnu++23",
                 "benchmark/benchmark_lwfa.cpp",
-                "src/*.cpp",
                 "-o",
                 "benchmark/benchmark_lwfa"
             ],
@@ -97,7 +93,6 @@
                 "-g",
                 "-std=gnu++23",
                 "benchmark/benchmark_lbiwfa.cpp",
-                "src/*.cpp",
                 "-o",
                 "benchmark/benchmark_lbiwfa"
             ],
@@ -119,7 +114,6 @@
                 "-g",
                 "-std=gnu++23",
                 "benchmark/benchmark_parasail.cpp",
-                "src/*.cpp",
                 "-L./parasail/build",
                 "-lparasail",
                 "-Wl,-rpath,'$ORIGIN/../parasail/build'",
@@ -145,7 +139,6 @@
                 "-std=c++23",
                 "-Iinclude",
                 "benchmark/benchmark_seqan.cpp",
-                "src/*.cpp",
                 "-o",
                 "benchmark/benchmark_seqan"
             ],

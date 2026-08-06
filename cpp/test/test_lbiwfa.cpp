@@ -96,39 +96,43 @@ int main(int argc, char **argv)
                             std::string aln;
                             aln.resize(t.size() + q.size());
 
-                            auto start = std::chrono::steady_clock::now();
+                            auto start = std::chrono::high_resolution_clock::now();
 
                             char *aln_t;
                             int32_t s_t;
                             if (score_schema_name == "bowtie")
                             {
-                                BiFront FrM_f('M', bowtie_wfa.p + 1, 'F');
-                                BiFront FrI_f('I', bowtie_wfa.p + 1, 'F');
-                                BiFront FrD_f('D', bowtie_wfa.p + 1, 'F');
-                                BiFront FrM_r('M', bowtie_wfa.p + 1, 'R');
-                                BiFront FrI_r('I', bowtie_wfa.p + 1, 'R');
-                                BiFront FrD_r('D', bowtie_wfa.p + 1, 'R');
+                                BiFront<'M', bowtie_wfa.p, 'F'> FrM_f;
+                                BiFront<'I', bowtie_wfa.p, 'F'> FrI_f;
+                                BiFront<'D', bowtie_wfa.p, 'F'> FrD_f;
+                                BiFront<'M', bowtie_wfa.p, 'R'> FrM_r;
+                                BiFront<'I', bowtie_wfa.p, 'R'> FrI_r;
+                                BiFront<'D', bowtie_wfa.p, 'R'> FrD_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
                             }
                             else
                             {
                                 // score_schema_name == "bwa"
-                                BiFront FrM_f('M', bwa_wfa.p + 1, 'F');
-                                BiFront FrI_f('I', bwa_wfa.p + 1, 'F');
-                                BiFront FrD_f('D', bwa_wfa.p + 1, 'F');
-                                BiFront FrM_r('M', bwa_wfa.p + 1, 'R');
-                                BiFront FrI_r('I', bwa_wfa.p + 1, 'R');
-                                BiFront FrD_r('D', bwa_wfa.p + 1, 'R');
+                                BiFront<'M', bwa_wfa.p, 'F'> FrM_f;
+                                BiFront<'I', bwa_wfa.p, 'F'> FrI_f;
+                                BiFront<'D', bwa_wfa.p, 'F'> FrD_f;
+                                BiFront<'M', bwa_wfa.p, 'R'> FrM_r;
+                                BiFront<'I', bwa_wfa.p, 'R'> FrI_r;
+                                BiFront<'D', bwa_wfa.p, 'R'> FrD_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
                             }
+
+                            auto end = std::chrono::high_resolution_clock::now();
+                            std::chrono::duration<double, std::milli> elapsed = end - start;
+                            total_time += elapsed.count();
 
                             if (s_t != *it)
                             {
@@ -137,10 +141,6 @@ int main(int argc, char **argv)
                                           << q << '\n';
                                 std::exit(1);
                             }
-
-                            auto end = std::chrono::steady_clock::now();
-                            std::chrono::duration<double, std::milli> elapsed = end - start;
-                            total_time += elapsed.count();
 
                             ++it;
                         }

@@ -14,23 +14,20 @@ struct BiRow
     int32_t dl; // dl > N means empty row
 };
 
+template <char c, int32_t p, char orientation>
 class BiFront
 {
 private:
     std::string_view t;        // text
     std::string_view q;        // query
-    char c;                    // M or I or D
     std::vector<BiRow> birows; // row information
-    char orientation;          // F (forward) or R (reverse)
     int32_t invalid_num;       // the number of accumulated invalid offset, either out of bound or offset is -1 (does not exist)
 
 public:
-    BiFront(const char c_, const int32_t pp1, const char orientation_)
+    BiFront()
     {
-        c = c_;
-        birows.resize(pp1);
+        birows.resize(p + 1);
         birows.shrink_to_fit();
-        orientation = orientation_;
     }
 
     int32_t extend(const int32_t n, const int32_t m)
@@ -125,11 +122,6 @@ public:
             return std::numeric_limits<int32_t>::min();
         }
         return birow.fs[d - birow.dl];
-    }
-
-    char get_c()
-    {
-        return c;
     }
 
     int32_t dl(int32_t idx)

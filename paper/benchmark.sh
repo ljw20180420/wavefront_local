@@ -5,6 +5,8 @@ cd $( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # change to the dir to the project
 cd ..
 
+set -euo pipefail
+
 parse_ini() {
     local target=$1
     sed -nEe '
@@ -19,7 +21,6 @@ parse_ini() {
 compile_lwfa() {
     g++ -O3 -std=gnu++23 \
         cpp/benchmark/benchmark_lwfa.cpp \
-        cpp/src/*.cpp \
         -o cpp/benchmark/benchmark_lwfa
 }
 
@@ -48,7 +49,6 @@ benchmark_lwfa() {
 compile_lbiwfa() {
     g++ -O3 -std=gnu++23 \
         cpp/benchmark/benchmark_lbiwfa.cpp \
-        cpp/src/*.cpp \
         -o cpp/benchmark/benchmark_lbiwfa
 }
 
@@ -134,9 +134,9 @@ benchmark_seqan() {
 lengths=$(parse_ini length)
 err_nums=$(parse_ini err_num)
 end_ups=$(parse_ini end_up)
-# benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
+benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
 # benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" diag
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" striped
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" scan
-benchmark_seqan "${lengths}" "${err_nums}" "${end_ups}"
+# benchmark_seqan "${lengths}" "${err_nums}" "${end_ups}"

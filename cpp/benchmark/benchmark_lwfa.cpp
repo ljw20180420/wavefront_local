@@ -23,8 +23,6 @@ int main(int argc, char **argv)
     std::string err_num = argv[2];
     std::string end_up = argv[3];
 
-    auto [l_c, x_c, o_c, e_c] = bowtie_score;
-    auto [x, o, e, j] = score_system_canonical2wavefront(l_c, x_c, o_c, e_c);
     char c_f = 'L';
     char c_r = 'L';
 
@@ -54,8 +52,8 @@ int main(int argc, char **argv)
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        auto [s_t, d_t, f_t] = lwfa(q, t, x, o, e, j, c_f, c_r, FrXM, FrI, FrD);
-        std::string aln = track(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size(), x, o, e, j);
+        auto [s_t, d_t, f_t] = lwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
+        std::string aln = track<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
         doNotOptimize(aln);
 
         auto end = std::chrono::high_resolution_clock::now();

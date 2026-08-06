@@ -28,12 +28,12 @@ int main(int argc, char **argv)
 
     double total_time = 0.0;
 
-    BiFront FrM_f('M', bowtie_wfa.p + 1, 'F');
-    BiFront FrI_f('I', bowtie_wfa.p + 1, 'F');
-    BiFront FrD_f('D', bowtie_wfa.p + 1, 'F');
-    BiFront FrM_r('M', bowtie_wfa.p + 1, 'R');
-    BiFront FrI_r('I', bowtie_wfa.p + 1, 'R');
-    BiFront FrD_r('D', bowtie_wfa.p + 1, 'R');
+    BiFront<'M', bowtie_wfa.p, 'F'> FrM_f;
+    BiFront<'I', bowtie_wfa.p, 'F'> FrI_f;
+    BiFront<'D', bowtie_wfa.p, 'F'> FrD_f;
+    BiFront<'M', bowtie_wfa.p, 'R'> FrM_r;
+    BiFront<'I', bowtie_wfa.p, 'R'> FrI_r;
+    BiFront<'D', bowtie_wfa.p, 'R'> FrD_r;
     FrontXM FrXM;
     Front FrI, FrD;
     std::string aln;
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
         aln.resize(aln_t - aln.data());
         int32_t s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
         doNotOptimize(s_t);

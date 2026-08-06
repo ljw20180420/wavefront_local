@@ -45,18 +45,6 @@ int main(int argc, char **argv)
     for (const auto score_schema_name_ : cfg["score_schema"])
     {
         std::string score_schema_name = std::get<std::string>(score_schema_name_);
-        ScoreCanonical score_schema;
-        if (score_schema_name == "bowtie")
-        {
-            score_schema = bowtie_score;
-        }
-        else
-        {
-            // score_schema_name == "bwa"
-            score_schema = bwa_score;
-        }
-        auto [l_c, x_c, o_c, e_c] = score_schema;
-        auto [x, o, e, j] = score_system_canonical2wavefront(l_c, x_c, o_c, e_c);
 
         for (const auto end_up_ : cfg["end_up"])
         {
@@ -109,9 +97,31 @@ int main(int argc, char **argv)
                             std::getline(ss, t, ',');
                             std::getline(ss, q);
 
-                            auto start = std::chrono::steady_clock::now();
+                            auto start = std::chrono::high_resolution_clock::now();
 
-                            auto [s_t, d_t, f_t] = lwfa(q, t, x, o, e, j, c_f, c_r, FrXM, FrI, FrD);
+                            int32_t s_t, d_t, f_t;
+                            std::string aln;
+                            int32_t s_t_aln;
+                            if (score_schema_name == "bowtie")
+                            {
+                                std::tie(s_t, d_t, f_t) = lwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
+                                aln = track<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
+                                std::reverse(aln.begin(), aln.end());
+                                s_t_aln = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
+                            }
+                            else
+                            {
+                                // score_schema_name == "bwa"
+                                std::tie(s_t, d_t, f_t) = lwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
+                                aln = track<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
+                                std::reverse(aln.begin(), aln.end());
+                                s_t_aln = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
+                            }
+
+                            auto end = std::chrono::high_resolution_clock::now();
+                            std::chrono::duration<double, std::milli> elapsed = end - start;
+                            total_time += elapsed.count();
+
                             if (s_t != *it)
                             {
                                 std::cerr << "score not equal to python version\n"
@@ -119,14 +129,6 @@ int main(int argc, char **argv)
                                           << q << '\n';
                                 std::exit(1);
                             }
-                            std::string aln = track(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size(), x, o, e, j);
-
-                            auto end = std::chrono::steady_clock::now();
-                            std::chrono::duration<double, std::milli> elapsed = end - start;
-                            total_time += elapsed.count();
-
-                            std::reverse(aln.begin(), aln.end());
-                            int32_t s_t_aln = eval_score(aln, q, t, x, o, e, j);
                             if (s_t_aln != *it)
                             {
                                 std::cerr << "score recovered from alignment not equal to python version\n"

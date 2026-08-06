@@ -42,7 +42,8 @@ constexpr ScoreWFA bowtie_wfa = score_system_canonical2wavefront(bowtie_score);
 constexpr ScoreWFA bwa_wfa = score_system_canonical2wavefront(bwa_score);
 constexpr ScoreWFA blast_wfa = score_system_canonical2wavefront(blast_score);
 
-int32_t score_wavefront2canonical(int32_t penalty, int32_t l_c, int32_t M, int32_t N)
+template <int32_t l_c>
+int32_t score_wavefront2canonical(int32_t penalty, int32_t M, int32_t N)
 {
     return (l_c * (M + N) - penalty) / 2;
 }
