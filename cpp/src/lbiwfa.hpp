@@ -56,14 +56,13 @@ int32_t loop_next(int32_t idx)
 }
 
 template <int32_t x, int32_t o, int32_t e, int32_t j, int32_t p, char orientation>
-void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', p, orientation> &FrI, BiFront<'D', p, orientation> &FrD, int32_t s, int32_t idx, char c)
+void next(const int32_t N, const int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', p, orientation> &FrI, BiFront<'D', p, orientation> &FrD, const int32_t s, const int32_t idx, const char c)
 {
-    bool jump = std::cmp_equal(s % j, 0);
     int32_t idx_x = loop_minus<x, p>(idx, s);
-    int32_t idx_e = loop_minus<e, p>(idx, s);
-    int32_t idx_o = loop_minus<o + e, p>(idx, s);
     if (std::cmp_greater_equal(s, e))
     {
+        int32_t idx_e = loop_minus<e, p>(idx, s);
+        int32_t idx_o = loop_minus<o + e, p>(idx, s);
         int32_t Mdl, Mdu;
         if (std::cmp_greater_equal(s, o + e))
         {
@@ -146,6 +145,7 @@ void next(int32_t N, int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', 
             du = std::max(Mdu, du);
         }
     }
+    bool jump = std::cmp_equal(s % j, 0);
     int32_t Jdl, Jdu;
     if (c == 'L' && jump)
     {
