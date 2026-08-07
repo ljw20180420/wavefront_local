@@ -7,107 +7,99 @@
 #include <string_view>
 #include <utility>
 #include <limits>
+#include <algorithm>
 
-struct BiRow
+enum class IMD
 {
-    std::vector<int32_t> fs;
-    int32_t dl; // dl > N means empty row
+    I, // Defaults to 0
+    M, // Defaults to 1
+    D  // Defaults to 2
 };
 
-template <char c, int32_t p, char orientation>
-class BiFront
+template <int32_t p>
+class BiTable
 {
 private:
-    std::string_view t;              // text
-    std::string_view q;              // query
-    std::array<BiRow, p + 1> birows; // row information
+    int32_t N;
+    int32_t M;
+    std::vector<int32_t> fs;
+    std::array<int32_t, 3 * (p + 1)> dls;
+    std::array<int32_t, 3 * (p + 1)> dus;
 
 public:
-    const int32_t extend(int32_t n, int32_t m)
+    BiTable()
     {
-        const int32_t M = t.size();
-        const int32_t N = q.size();
-        if (orientation == 'F')
+        dls.fill(std::numeric_limits<int32_t>::max() / 2);
+        dus.fill(std::numeric_limits<int32_t>::min() / 2);
+    }
+
+    void reset(const int32_t N_, const int32_t M_)
+    {
+        for (int32_t idx = 0; std::cmp_less_equal(idx, p); ++idx)
         {
-            const int32_t n_o = n;
-            for (; std::cmp_less(n, N) && std::cmp_less(m, M) && q[n] == t[m]; ++n, ++m)
+            reset_row(idx);
+        }
+        N = N_;
+        M = M_;
+        fs.resize(3 * (p + 1) * (N_ + M_ + 1), std::numeric_limits<int32_t>::min() / 2);
+    }
+
+    void reset_row(const int32_t idx)
+    {
+        for (IMD imd : {IMD::I, IMD::M, IMD::D})
+        {
+            for (int32_t d = dl(imd, idx); std::cmp_less(d, du(imd, idx)); ++d)
             {
+                f(imd, idx, d) = std::numeric_limits<int32_t>::min() / 2;
             }
-            return n - n_o;
-        }
-        else
-        {
-            // orientation == 'R'
-            n = N - n - 1;
-            m = M - m - 1;
-            const int32_t n_o = n;
-            for (; std::cmp_greater_equal(n, 0) && std::cmp_greater_equal(m, 0) && q[n] == t[m]; --n, --m)
-            {
-            }
-            return n_o - n;
+            dl(imd, idx) = std::numeric_limits<int32_t>::max() / 2;
+            du(imd, idx) = std::numeric_limits<int32_t>::min() / 2;
         }
     }
 
-    void push(const int32_t idx, const int32_t d, const int32_t f)
+    int32_t &f(IMD imd, int32_t idx, int32_t d)
     {
-        BiRow &birow = birows[idx];
-        const int32_t n = (f + d) / 2;
-        const int32_t m = (f - d) / 2;
-        int32_t ff = f;
-        if (c == 'M')
-        {
-            int32_t mu = extend(n, m);
-            ff += 2 * mu;
-        }
-        if (birow.fs.empty())
-        {
-            birow.dl = d;
-        }
-        else
-        {
-            birow.fs.resize(d - birow.dl, std::numeric_limits<int32_t>::min());
-        }
-        birow.fs.push_back(ff);
+        return fs[static_cast<int32_t>(imd) + idx * 3 + (d + M) * 3 * (p + 1)];
     }
 
-    int32_t f(int32_t idx, int32_t d)
+    int32_t &dl(IMD imd, int32_t idx)
     {
-        if (std::cmp_less(idx, 0))
-        {
-            return std::numeric_limits<int32_t>::min();
-        }
-        BiRow &birow = birows[idx];
-        if (std::cmp_less(d, birow.dl) || std::cmp_greater_equal(d - birow.dl, birow.fs.size()))
-        {
-            return std::numeric_limits<int32_t>::min();
-        }
-        return birow.fs[d - birow.dl];
+        return dls[static_cast<int32_t>(imd) + idx * 3];
     }
 
-    int32_t dl(int32_t idx)
+    int32_t &du(IMD imd, int32_t idx)
     {
-        return birows[idx].dl;
+        return dus[static_cast<int32_t>(imd) + idx * 3];
     }
 
-    int32_t wave_size(int32_t idx)
+    std::tuple<int32_t, int32_t> NM()
     {
-        return birows[idx].fs.size();
-    }
-
-    void reset(std::string_view t_, std::string_view q_)
-    {
-        t = t_;
-        q = q_;
-        for (BiRow &birow : birows)
-        {
-            birow.fs.clear();
-            birow.dl = q.size() + 1;
-        }
-    }
-
-    void reset_row(int32_t idx)
-    {
-        birows[idx].fs.clear();
-        birows[idx].dl = q.size() + 1;
+        return std::make_tuple(N, M);
     }
 };
+
+template <char orientation>
+const int32_t extend(std::string_view q, std::string_view t, int32_t n, int32_t m)
+{
+    const int32_t M = t.size();
+    const int32_t N = q.size();
+    if (orientation == 'F')
+    {
+        const int32_t n_o = n;
+        for (; std::cmp_less(n, N) && std::cmp_less(m, M) && q[n] == t[m]; ++n, ++m)
+        {
+        }
+        return n - n_o;
+    }
+    else
+    {
+        // orientation == 'R'
+        n = N - n - 1;
+        m = M - m - 1;
+        const int32_t n_o = n;
+        for (; std::cmp_greater_equal(n, 0) && std::cmp_greater_equal(m, 0) && q[n] == t[m]; --n, --m)
+        {
+        }
+        return n_o - n;
+    }
+}

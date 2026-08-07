@@ -13,20 +13,11 @@
 #include <tuple>
 #include <functional>
 
-bool legal_df(const int32_t d, const int32_t f, const int32_t N, const int32_t M)
-{
-    if (f < 0 || std::cmp_greater(f + d, 2 * N) || std::cmp_greater(f - d, 2 * M))
-    {
-        return false;
-    }
-    return true;
-}
-
 template <int32_t gap, int32_t p>
 int32_t loop_minus(int32_t idx, int32_t s)
 {
     int32_t idx_ = idx - gap;
-    if (std::cmp_less_equal(s, gap) || std::cmp_greater_equal(idx_, 0))
+    if (std::cmp_greater_equal(idx_, 0))
     {
         return idx_;
     }
@@ -37,7 +28,7 @@ template <int32_t p>
 int32_t loop_minus(int32_t idx, int32_t s, int32_t gap)
 {
     int32_t idx_ = idx - gap;
-    if (std::cmp_less_equal(s, gap) || std::cmp_greater_equal(idx_, 0))
+    if (std::cmp_greater_equal(idx_, 0))
     {
         return idx_;
     }
@@ -56,138 +47,271 @@ int32_t loop_next(int32_t idx)
 }
 
 template <int32_t x, int32_t o, int32_t e, int32_t j, int32_t p, char orientation>
-void next(const int32_t N, const int32_t M, BiFront<'M', p, orientation> &FrM, BiFront<'I', p, orientation> &FrI, BiFront<'D', p, orientation> &FrD, const int32_t s, const int32_t idx, const char c)
+void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, const int32_t s, const int32_t idx, const char c)
 {
-    int32_t idx_x = loop_minus<x, p>(idx, s);
-    if (std::cmp_greater_equal(s, e))
-    {
-        int32_t idx_e = loop_minus<e, p>(idx, s);
-        int32_t idx_o = loop_minus<o + e, p>(idx, s);
-        int32_t Mdl, Mdu;
-        if (std::cmp_greater_equal(s, o + e))
-        {
-            Mdl = FrM.dl(idx_o);
-            Mdu = Mdl + FrM.wave_size(idx_o);
-        }
+    const int32_t N = q.size();
+    const int32_t M = t.size();
+    const int32_t idx_x = loop_minus<x, p>(idx, s);
+    const int32_t idx_e = loop_minus<e, p>(idx, s);
+    const int32_t idx_o = loop_minus<o + e, p>(idx, s);
 
-        int32_t dl = std::numeric_limits<int32_t>::max();
-        int32_t du = std::numeric_limits<int32_t>::min();
-        if (std::cmp_greater_equal(s, o + e) && std::cmp_less(Mdl, Mdu))
+    {
+        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
+        for (int32_t d = BiFr.dl(IMD::I, idx_e); std::cmp_less(d, BiFr.du(IMD::I, idx_e)); ++d)
         {
-            dl = std::min(Mdl + 1, dl);
-            du = std::max(Mdu + 1, du);
-        }
-        int32_t Idl = FrI.dl(idx_e);
-        int32_t Idu = Idl + FrI.wave_size(idx_e);
-        if (std::cmp_less(Idl, Idu))
-        {
-            dl = std::min(Idl + 1, dl);
-            du = std::max(Idu + 1, du);
-        }
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
-        {
-            int32_t f = std::max(FrI.f(idx_e, d - 1) + 1, FrM.f(idx_o, d - 1) + 1);
-            if (!legal_df(d, f, N, M))
+            int32_t f = BiFr.f(IMD::I, idx_e, d);
+            if (std::cmp_less(f, 0))
             {
                 continue;
             }
-            FrI.push(idx, d, f);
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M))
+            {
+                dl = d;
+                break;
+            }
         }
-
-        dl = std::numeric_limits<int32_t>::max();
-        du = std::numeric_limits<int32_t>::min();
-        if (std::cmp_greater_equal(s, o + e) && std::cmp_less(Mdl, Mdu))
+        int32_t du = std::numeric_limits<int32_t>::min() / 2;
+        for (int32_t d = BiFr.du(IMD::I, idx_e) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::I, idx_e)); --d)
         {
-            dl = std::min(Mdl - 1, dl);
-            du = std::max(Mdu - 1, du);
-        }
-        int32_t Ddl = FrD.dl(idx_e);
-        int32_t Ddu = Ddl + FrD.wave_size(idx_e);
-        if (std::cmp_less(Ddl, Ddu))
-        {
-            dl = std::min(Ddl - 1, dl);
-            du = std::max(Ddu - 1, du);
-        }
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
-        {
-            int32_t f = std::max(FrD.f(idx_e, d + 1) + 1, FrM.f(idx_o, d + 1) + 1);
-            if (!legal_df(d, f, N, M))
+            int32_t f = BiFr.f(IMD::I, idx_e, d);
+            if (std::cmp_less(f, 0))
             {
                 continue;
             }
-            FrD.push(idx, d, f);
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M))
+            {
+                du = d + 1;
+                break;
+            }
+        }
+
+        BiFr.dl(IMD::I, idx) = std::min(dl + 1, BiFr.dl(IMD::I, idx));
+        BiFr.du(IMD::I, idx) = std::max(du + 1, BiFr.du(IMD::I, idx));
+        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        {
+            BiFr.f(IMD::I, idx, d + 1) = std::max(BiFr.f(IMD::I, idx_e, d) + 1, BiFr.f(IMD::I, idx, d + 1));
         }
     }
 
-    int32_t dl = std::numeric_limits<int32_t>::max();
-    int32_t du = std::numeric_limits<int32_t>::min();
-    int32_t Idl = FrI.dl(idx);
-    int32_t Idu = Idl + FrI.wave_size(idx);
-    if (std::cmp_less(Idl, Idu))
     {
-        dl = std::min(Idl, dl);
-        du = std::max(Idu, du);
-    }
-    int32_t Ddl = FrD.dl(idx);
-    int32_t Ddu = Ddl + FrD.wave_size(idx);
-    if (std::cmp_less(Ddl, Ddu))
-    {
-        dl = std::min(Ddl, dl);
-        du = std::max(Ddu, du);
-    }
-    if (std::cmp_greater_equal(s, x))
-    {
-        int32_t Mdl = FrM.dl(idx_x);
-        int32_t Mdu = Mdl + FrM.wave_size(idx_x);
-        if (std::cmp_less(Mdl, Mdu))
+        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
+        for (int32_t d = BiFr.dl(IMD::D, idx_e); std::cmp_less(d, BiFr.du(IMD::D, idx_e)); ++d)
         {
-            dl = std::min(Mdl, dl);
-            du = std::max(Mdu, du);
+            int32_t f = BiFr.f(IMD::D, idx_e, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M))
+            {
+                dl = d;
+                break;
+            }
+        }
+
+        int32_t du = std::numeric_limits<int32_t>::min() / 2;
+        for (int32_t d = BiFr.du(IMD::D, idx_e) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::D, idx_e)); --d)
+        {
+            int32_t f = BiFr.f(IMD::D, idx_e, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M))
+            {
+                du = d + 1;
+                break;
+            }
+        }
+
+        BiFr.dl(IMD::D, idx) = std::min(dl - 1, BiFr.dl(IMD::D, idx));
+        BiFr.du(IMD::D, idx) = std::max(du - 1, BiFr.du(IMD::D, idx));
+        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        {
+            BiFr.f(IMD::D, idx, d - 1) = std::max(BiFr.f(IMD::D, idx_e, d) + 1, BiFr.f(IMD::D, idx, d - 1));
         }
     }
-    bool jump = std::cmp_equal(s % j, 0);
-    int32_t Jdl, Jdu;
-    if (c == 'L' && jump)
+
+    {
+        int32_t Idl = std::numeric_limits<int32_t>::max() / 2;
+        int32_t Ddl = std::numeric_limits<int32_t>::max() / 2;
+        for (int32_t d = BiFr.dl(IMD::M, idx_o); std::cmp_less(d, BiFr.du(IMD::M, idx_o)); ++d)
+        {
+            int32_t f = BiFr.f(IMD::M, idx_o, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M) && std::cmp_equal(Idl, std::numeric_limits<int32_t>::max() / 2))
+            {
+                Idl = d;
+            }
+            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M) && std::cmp_equal(Ddl, std::numeric_limits<int32_t>::max() / 2))
+            {
+                Ddl = d;
+            }
+            if (std::cmp_not_equal(Idl, std::numeric_limits<int32_t>::max() / 2) && std::cmp_not_equal(Ddl, std::numeric_limits<int32_t>::max() / 2))
+            {
+                break;
+            }
+        }
+
+        int32_t Idu = std::numeric_limits<int32_t>::min() / 2;
+        int32_t Ddu = std::numeric_limits<int32_t>::min() / 2;
+        for (int32_t d = BiFr.du(IMD::M, idx_o) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::M, idx_o)); --d)
+        {
+            int32_t f = BiFr.f(IMD::M, idx_o, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M) && std::cmp_equal(Idu, std::numeric_limits<int32_t>::min() / 2))
+            {
+                Idu = d + 1;
+            }
+            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M) && std::cmp_equal(Ddu, std::numeric_limits<int32_t>::min() / 2))
+            {
+                Ddu = d + 1;
+            }
+            if (std::cmp_not_equal(Idu, std::numeric_limits<int32_t>::min() / 2) && std::cmp_not_equal(Ddu, std::numeric_limits<int32_t>::min() / 2))
+            {
+                break;
+            }
+        }
+
+        BiFr.dl(IMD::I, idx) = std::min(Idl + 1, BiFr.dl(IMD::I, idx));
+        BiFr.du(IMD::I, idx) = std::max(Idu + 1, BiFr.du(IMD::I, idx));
+        BiFr.dl(IMD::D, idx) = std::min(Ddl - 1, BiFr.dl(IMD::D, idx));
+        BiFr.du(IMD::D, idx) = std::max(Ddu - 1, BiFr.du(IMD::D, idx));
+        for (int32_t d = Idl; std::cmp_less(d, Idu); ++d)
+        {
+            BiFr.f(IMD::I, idx, d + 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::I, idx, d + 1));
+        }
+
+        for (int32_t d = Ddl; std::cmp_less(d, Ddu); ++d)
+        {
+            BiFr.f(IMD::D, idx, d - 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::D, idx, d - 1));
+        }
+    }
+
+    {
+        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
+        for (int32_t d = BiFr.dl(IMD::M, idx_x); std::cmp_less(d, BiFr.du(IMD::M, idx_x)); ++d)
+        {
+            int32_t f = BiFr.f(IMD::M, idx_x, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less(m, M))
+            {
+                dl = d;
+                break;
+            }
+        }
+
+        int32_t du = std::numeric_limits<int32_t>::min() / 2;
+        for (int32_t d = BiFr.du(IMD::M, idx_x) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::M, idx_x)); --d)
+        {
+            int32_t f = BiFr.f(IMD::M, idx_x, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            if (std::cmp_less(n, N) && std::cmp_less(m, M))
+            {
+                du = d + 1;
+                break;
+            }
+        }
+
+        BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
+        BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
+        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        {
+            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::M, idx_x, d) + 2, BiFr.f(IMD::M, idx, d));
+        }
+    }
+
+    {
+        int32_t dl = BiFr.dl(IMD::I, idx);
+        int32_t du = BiFr.du(IMD::I, idx);
+        BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
+        BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
+        for (int32_t d = dl; d < du; ++d)
+        {
+            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::I, idx, d), BiFr.f(IMD::M, idx, d));
+        }
+    }
+
+    {
+        int32_t dl = BiFr.dl(IMD::D, idx);
+        int32_t du = BiFr.du(IMD::D, idx);
+        BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
+        BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
+        for (int32_t d = dl; d < du; ++d)
+        {
+            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::D, idx, d), BiFr.f(IMD::M, idx, d));
+        }
+    }
+
+    if (c == 'L' && std::cmp_equal(s % j, 0))
     {
         int32_t f = s / j;
-        Jdl = std::max(-f, f - 2 * M);
-        Jdu = std::min(f, 2 * N - f) + 1;
-        if (std::cmp_less(Jdl, Jdu))
+        int32_t dl = std::max(-f, f - 2 * M);
+        int32_t du = std::min(f, 2 * N - f) + 1;
+        BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
+        BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
+        for (int32_t d = dl; d < du; d += 2)
         {
-            dl = std::min(Jdl, dl);
-            du = std::max(Jdu, du);
+            BiFr.f(IMD::M, idx, d) = std::max(f, BiFr.f(IMD::M, idx, d));
         }
     }
-    for (int32_t d = dl; std::cmp_less(d, du); ++d)
+
     {
-        int32_t f = std::max({FrI.f(idx, d), FrD.f(idx, d), FrM.f(idx_x, d) + 2});
-        if (c == 'L' && jump && std::cmp_less_equal(Jdl, d) && std::cmp_less(d, Jdu) && std::cmp_equal(d & 1, Jdl & 1))
+        int32_t dl = BiFr.dl(IMD::M, idx);
+        int32_t du = BiFr.du(IMD::M, idx);
+        for (int32_t d = dl; d < du; ++d)
         {
-            f = std::max(s / j, f);
+            int32_t f = BiFr.f(IMD::M, idx, d);
+            if (std::cmp_less(f, 0))
+            {
+                continue;
+            }
+            int32_t n = (f + d) / 2;
+            int32_t m = (f - d) / 2;
+            int32_t mu = extend<orientation>(q, t, n, m);
+            BiFr.f(IMD::M, idx, d) += 2 * mu;
         }
-        if (!legal_df(d, f, N, M))
-        {
-            continue;
-        }
-        FrM.push(idx, d, f);
     }
 }
 
-template <int32_t j, int32_t p, char orientation>
-std::tuple<int32_t, int32_t, int32_t> try_jump(BiFront<'M', p, orientation> &FrM, int32_t s, int32_t idx, int32_t M, int32_t N)
+template <int32_t j, int32_t p>
+std::tuple<int32_t, int32_t, int32_t> try_jump(BiTable<p> &BiFr, int32_t s, int32_t idx)
 {
-    if (FrM.wave_size(idx) == 0)
+    auto [N, M] = BiFr.NM();
+    int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
+    int32_t d_b;
+    int32_t f_b = std::numeric_limits<int32_t>::min() / 2;
+    for (int32_t d = BiFr.dl(IMD::M, idx); std::cmp_less(d, BiFr.du(IMD::M, idx)); ++d)
     {
-        return std::make_tuple(std::numeric_limits<int32_t>::max(), -1, -1);
-    }
-
-    int32_t d_b, s_b;
-    int32_t f_b = std::numeric_limits<int32_t>::min();
-    int32_t dl = FrM.dl(idx);
-    int32_t du = dl + FrM.wave_size(idx);
-    for (int32_t d = dl; std::cmp_less(d, du); ++d)
-    {
-        int32_t f = FrM.f(idx, d);
+        int32_t f = BiFr.f(IMD::M, idx, d);
         if (std::cmp_greater(f, f_b))
         {
             f_b = f;
@@ -199,32 +323,28 @@ std::tuple<int32_t, int32_t, int32_t> try_jump(BiFront<'M', p, orientation> &FrM
     return std::make_tuple(s_b, d_b, f_b);
 }
 
-template <char c, int32_t o, int32_t p, char orientation1, char orientation2>
-std::tuple<int32_t, int32_t, int32_t> overlap_c(BiFront<c, p, orientation1> &Fr, BiFront<c, p, orientation2> &Fr2, int32_t s,
-                                                int32_t idx,
-                                                int32_t s2l,
-                                                int32_t s2u,
-                                                int32_t M,
-                                                int32_t N)
+template <IMD imd, int32_t o, int32_t p>
+std::tuple<int32_t, int32_t, int32_t> overlap_c(BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
 {
-    int32_t s_b = std::numeric_limits<int32_t>::max();
+    auto [N, M] = BiFr.NM();
+    int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_b, f_b;
-    int32_t dl = Fr.dl(idx);
-    int32_t du = dl + Fr.wave_size(idx);
+    int32_t dl = BiFr.dl(imd, idx);
+    int32_t du = BiFr.du(imd, idx);
     for (int32_t s2 = s2l; s2 < s2u; ++s2)
     {
         int32_t idx2 = loop_minus<p>(idx, s, s - s2);
-        int32_t d2l = Fr2.dl(idx2);
-        int32_t d2u = d2l + Fr2.wave_size(idx2);
+        int32_t d2l = BiFr2.dl(imd, idx2);
+        int32_t d2u = BiFr2.du(imd, idx2);
         for (int32_t d = std::max(dl, N - M - d2u + 1); std::cmp_less(d, std::min(du, N - M - d2l + 1)); ++d)
         {
             int32_t d2 = N - M - d;
-            int32_t f = Fr.f(idx, d);
-            int32_t f2 = Fr2.f(idx2, d2);
+            int32_t f = BiFr.f(imd, idx, d);
+            int32_t f2 = BiFr2.f(imd, idx2, d2);
             if (f + f2 >= N + M)
             {
                 int32_t new_score = s + s2;
-                if (c != 'M')
+                if (imd != IMD::M)
                 {
                     new_score -= o;
                 }
@@ -241,26 +361,14 @@ std::tuple<int32_t, int32_t, int32_t> overlap_c(BiFront<c, p, orientation1> &Fr,
     return std::make_tuple(s_b, d_b, f_b);
 }
 
-template <int32_t o, int32_t p, char orientation1, char orientation2>
-std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
-    BiFront<'M', p, orientation1> &FrM,
-    BiFront<'I', p, orientation1> &FrI,
-    BiFront<'D', p, orientation1> &FrD,
-    BiFront<'M', p, orientation2> &FrM2,
-    BiFront<'I', p, orientation2> &FrI2,
-    BiFront<'D', p, orientation2> &FrD2,
-    int32_t s,
-    int32_t idx,
-    int32_t s2l,
-    int32_t s2u,
-    int32_t M,
-    int32_t N)
+template <int32_t o, int32_t p>
+std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
 {
-    int32_t s_b = std::numeric_limits<int32_t>::max();
+    int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_b, f_b;
     char c_b = '\0';
     {
-        auto [s_c, d_c, f_c] = overlap_c<'M', o, p, orientation1, orientation2>(FrM, FrM2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::M, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -270,7 +378,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
         }
     }
     {
-        auto [s_c, d_c, f_c] = overlap_c<'I', o, p, orientation1, orientation2>(FrI, FrI2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::I, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -280,7 +388,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
         }
     }
     {
-        auto [s_c, d_c, f_c] = overlap_c<'D', o, p, orientation1, orientation2>(FrD, FrD2, s, idx, s2l, s2u, M, N);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::D, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -300,46 +408,54 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(
 }
 
 template <int32_t x, int32_t o, int32_t e, int32_t j, int32_t p>
-char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront<'M', p, 'F'> &FrM_f, BiFront<'I', p, 'F'> &FrI_f, BiFront<'D', p, 'F'> &FrD_f, BiFront<'M', p, 'R'> &FrM_r, BiFront<'I', p, 'R'> &FrI_r, BiFront<'D', p, 'R'> &FrD_r, FrontXM &FrXM, Front &FrI, Front &FrD, char *aln_t)
+char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable<p> &BiFr_f, BiTable<p> &BiFr_r, FrontXM &FrXM, Front &FrI, Front &FrD, char *aln_t)
 {
     int32_t M = t.size();
     int32_t N = q.size();
-    FrM_f.reset(t, q);
-    FrI_f.reset(t, q);
-    FrD_f.reset(t, q);
-    FrM_r.reset(t, q);
-    FrI_r.reset(t, q);
-    FrD_r.reset(t, q);
+    BiFr_f.reset(N, M);
+    BiFr_r.reset(N, M);
 
+    int32_t idx = 0;
     if (c_f == 'M')
     {
-        FrM_f.push(0, 0, 0);
+        BiFr_f.f(IMD::M, idx, 0) = 0;
+        BiFr_f.dl(IMD::M, idx) = 0;
+        BiFr_f.du(IMD::M, idx) = 1;
     }
     else if (c_f == 'I')
     {
-        FrI_f.push(0, 0, 0);
+        BiFr_f.f(IMD::I, idx, 0) = 0;
+        BiFr_f.dl(IMD::I, idx) = 0;
+        BiFr_f.du(IMD::I, idx) = 1;
     }
     else if (c_f == 'D')
     {
-        FrD_f.push(0, 0, 0);
+        BiFr_f.f(IMD::D, idx, 0) = 0;
+        BiFr_f.dl(IMD::D, idx) = 0;
+        BiFr_f.du(IMD::D, idx) = 1;
     }
 
     if (c_r == 'M')
     {
-        FrM_r.push(0, 0, 0);
+        BiFr_r.f(IMD::M, idx, 0) = 0;
+        BiFr_r.dl(IMD::M, idx) = 0;
+        BiFr_r.du(IMD::M, idx) = 1;
     }
     else if (c_r == 'I')
     {
-        FrI_r.push(0, 0, 0);
+        BiFr_r.f(IMD::I, idx, 0) = 0;
+        BiFr_r.dl(IMD::I, idx) = 0;
+        BiFr_r.du(IMD::I, idx) = 1;
     }
     else if (c_r == 'D')
     {
-        FrD_r.push(0, 0, 0);
+        BiFr_r.f(IMD::D, idx, 0) = 0;
+        BiFr_r.dl(IMD::D, idx) = 0;
+        BiFr_r.du(IMD::D, idx) = 1;
     }
 
     int32_t s = 0;
-    int32_t idx = 0;
-    int32_t s_t = std::numeric_limits<int32_t>::max();
+    int32_t s_t = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_t, f_t;
     char c_t = '\0';
     int32_t anti_diag_upper = -1;
@@ -348,10 +464,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
     char split; // F (forward jump) or R (reverse jump) or P (path)
     while (std::cmp_less(2 * s - o - p, s_t))
     {
-        next<x, o, e, j, p, 'F'>(N, M, FrM_f, FrI_f, FrD_f, s, idx, c_f);
+        next<x, o, e, j, p, 'F'>(q, t, BiFr_f, s, idx, c_f);
         if (c_r == 'L')
         {
-            auto [s_b, d_b, f_b] = try_jump<j, p, 'F'>(FrM_f, s, idx, M, N);
+            auto [s_b, d_b, f_b] = try_jump<j, p>(BiFr_f, s, idx);
             if (std::cmp_less(s_b, s_t))
             {
                 s_t = s_b;
@@ -361,10 +477,10 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
                 split = 'F';
             }
         }
-        next<x, o, e, j, p, 'R'>(N, M, FrM_r, FrI_r, FrD_r, s, idx, c_r);
+        next<x, o, e, j, p, 'R'>(q, t, BiFr_r, s, idx, c_r);
         if (c_f == 'L')
         {
-            auto [s_b, d_b, f_b] = try_jump<j, p, 'R'>(FrM_r, s, idx, M, N);
+            auto [s_b, d_b, f_b] = try_jump<j, p>(BiFr_r, s, idx);
             if (std::cmp_less(s_b, s_t))
             {
                 d_b = N - M - d_b;
@@ -377,23 +493,19 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
             }
         }
 
-        int32_t dl = FrM_f.dl(idx);
-        int32_t du = dl + FrM_f.wave_size(idx);
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        for (int32_t d = BiFr_f.dl(IMD::M, idx); std::cmp_less(d, BiFr_f.du(IMD::M, idx)); ++d)
         {
-            anti_diag_upper = std::max(FrM_f.f(idx, d), anti_diag_upper);
+            anti_diag_upper = std::max(BiFr_f.f(IMD::M, idx, d), anti_diag_upper);
         }
-        dl = FrM_r.dl(idx);
-        du = dl + FrM_r.wave_size(idx);
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        for (int32_t d = BiFr_r.dl(IMD::M, idx); std::cmp_less(d, BiFr_r.du(IMD::M, idx)); ++d)
         {
-            anti_diag_lower = std::max(FrM_r.f(idx, d), anti_diag_lower);
+            anti_diag_lower = std::max(BiFr_r.f(IMD::M, idx, d), anti_diag_lower);
         }
 
-        if (anti_diag_upper + anti_diag_lower >= M + N)
+        if (std::cmp_greater_equal(anti_diag_upper + anti_diag_lower, M + N))
         {
             {
-                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p, 'F', 'R'>(FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, s, idx, s - p, s, M, N);
+                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p>(BiFr_f, BiFr_r, s, idx, s - p, s);
                 if (s_b < s_t)
                 {
                     s_t = s_b;
@@ -406,7 +518,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
                 }
             }
             {
-                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap<o, p, 'R', 'F'>(FrM_r, FrI_r, FrD_r, FrM_f, FrI_f, FrD_f, s, idx, s - p, s + 1, M, N);
+                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap<o, p>(BiFr_r, BiFr_f, s, idx, s - p, s + 1);
                 if (s_b < s_t)
                 {
                     d_b = N - M - d_b;
@@ -424,12 +536,8 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
 
         ++s;
         idx = loop_next<p>(idx);
-        FrM_f.reset_row(idx);
-        FrI_f.reset_row(idx);
-        FrD_f.reset_row(idx);
-        FrM_r.reset_row(idx);
-        FrI_r.reset_row(idx);
-        FrD_r.reset_row(idx);
+        BiFr_f.reset_row(idx);
+        BiFr_r.reset_row(idx);
     }
 
     int32_t n = (f_t + d_t) / 2;
@@ -447,7 +555,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, 'M', FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j, p>(q.substr(0, n), t.substr(0, m), c_f, 'M', BiFr_f, BiFr_r, FrXM, FrI, FrD, aln_t);
         }
         std::memset(aln_t, 'S', N - n);
         aln_t += N - n;
@@ -471,7 +579,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(n), t.substr(m), 'M', c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j, p>(q.substr(n), t.substr(m), 'M', c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln_t);
         }
     }
     else
@@ -487,7 +595,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(0, n), t.substr(0, m), c_f, c_t, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j, p>(q.substr(0, n), t.substr(0, m), c_f, c_t, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln_t);
         }
         if (score_lower_t <= p)
         {
@@ -500,7 +608,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiFront
         }
         else
         {
-            aln_t = lbiwfa<x, o, e, j>(q.substr(n), t.substr(m), c_t, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln_t);
+            aln_t = lbiwfa<x, o, e, j, p>(q.substr(n), t.substr(m), c_t, c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln_t);
         }
     }
     return aln_t;

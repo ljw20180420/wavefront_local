@@ -102,30 +102,22 @@ int main(int argc, char **argv)
                             int32_t s_t;
                             if (score_schema_name == "bowtie")
                             {
-                                BiFront<'M', bowtie_wfa.p, 'F'> FrM_f;
-                                BiFront<'I', bowtie_wfa.p, 'F'> FrI_f;
-                                BiFront<'D', bowtie_wfa.p, 'F'> FrD_f;
-                                BiFront<'M', bowtie_wfa.p, 'R'> FrM_r;
-                                BiFront<'I', bowtie_wfa.p, 'R'> FrI_r;
-                                BiFront<'D', bowtie_wfa.p, 'R'> FrD_r;
+                                BiTable<bowtie_wfa.p> BiFr_f;
+                                BiTable<bowtie_wfa.p> BiFr_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln.data());
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
                             }
                             else
                             {
                                 // score_schema_name == "bwa"
-                                BiFront<'M', bwa_wfa.p, 'F'> FrM_f;
-                                BiFront<'I', bwa_wfa.p, 'F'> FrI_f;
-                                BiFront<'D', bwa_wfa.p, 'F'> FrD_f;
-                                BiFront<'M', bwa_wfa.p, 'R'> FrM_r;
-                                BiFront<'I', bwa_wfa.p, 'R'> FrI_r;
-                                BiFront<'D', bwa_wfa.p, 'R'> FrD_r;
+                                BiTable<bwa_wfa.p> BiFr_f;
+                                BiTable<bwa_wfa.p> BiFr_r;
                                 FrontXM FrXM;
                                 Front FrI, FrD;
-                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p>(q, t, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
+                                aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p>(q, t, c_f, c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln.data());
                                 aln.resize(aln_t - aln.data());
                                 s_t = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
                             }
@@ -136,10 +128,7 @@ int main(int argc, char **argv)
 
                             if (s_t != *it)
                             {
-                                std::cerr << "score not equal to python version\n"
-                                          << t << '\n'
-                                          << q << '\n';
-                                std::exit(1);
+                                throw std::runtime_error("score not equal to python version\n");
                             }
 
                             ++it;
