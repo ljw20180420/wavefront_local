@@ -216,7 +216,7 @@
             ],
             "preLaunchTask": "benchmark seqan",
             "miDebuggerPath": "/usr/bin/gdb"
-        }
+        },
     ],
     "version": "2.0.0"
 }

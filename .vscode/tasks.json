@@ -150,7 +150,7 @@
             ],
             "group": "build",
             "detail": "Build seqan benchmark."
-        }
+        },
     ],
     "version": "2.0.0"
 }

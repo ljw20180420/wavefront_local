@@ -104,6 +104,8 @@ In preparation.
 # TODO
 
 ```
+- 跳过开头几个s<e,o+e,x
+- 设法优惠掉fs初始化
 - The SeqAn3 Fix: SeqAn3 introduces highly optimized, native low-bit alphabets like seqan3::dna4 (which uses only 2 bits per base to represent A, C, G, T) and seqan3::dna5
 - The SeqAn3 Fix: SeqAn3 handles dynamic programming matrices by utilizing specialized allocation stripes and structures that recycle memory buffers. Instead of allocating massive 2>
 - 检查benchmakr计时方法

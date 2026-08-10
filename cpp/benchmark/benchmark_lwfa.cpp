@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         std::chrono::duration<double, std::milli> elapsed = end - start;
 
         // std::reverse(aln.begin(), aln.end());
-        // int32_t s_t_aln = eval_score(aln, q, t, x, o, e, j);
+        // int32_t s_t_aln = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
         // if (std::cmp_not_equal(s_t, s_t_aln))
         // {
         //     std::cerr << "inconsistant score\n";

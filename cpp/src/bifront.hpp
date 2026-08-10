@@ -20,8 +20,7 @@ template <int32_t p>
 class BiTable
 {
 private:
-    int32_t N;
-    int32_t M;
+    int32_t mid;
     std::vector<int32_t> fs;
     std::array<int32_t, 3 * (p + 1)> dls;
     std::array<int32_t, 3 * (p + 1)> dus;
@@ -29,19 +28,23 @@ private:
 public:
     BiTable()
     {
+        mid = 0;
         dls.fill(std::numeric_limits<int32_t>::max() / 2);
         dus.fill(std::numeric_limits<int32_t>::min() / 2);
     }
 
-    void reset(const int32_t N_, const int32_t M_)
+    void reset(const int32_t N, const int32_t M)
     {
         for (int32_t idx = 0; std::cmp_less_equal(idx, p); ++idx)
         {
             reset_row(idx);
         }
-        N = N_;
-        M = M_;
-        fs.resize(3 * (p + 1) * (N_ + M_ + 1), std::numeric_limits<int32_t>::min() / 2);
+        int32_t mid_ = ((N + M) & 1) ? ((N + M + 1) / 2) : (N + M) / 2;
+        if (mid_ > mid)
+        {
+            mid = mid_;
+            fs.resize(3 * (p + 1) * (2 * mid_ + 1), std::numeric_limits<int32_t>::min() / 2);
+        }
     }
 
     void reset_row(const int32_t idx)
@@ -59,7 +62,7 @@ public:
 
     int32_t &f(IMD imd, int32_t idx, int32_t d)
     {
-        return fs[static_cast<int32_t>(imd) + idx * 3 + (d + M) * 3 * (p + 1)];
+        return fs[static_cast<int32_t>(imd) + idx * 3 + (d + mid) * 3 * (p + 1)];
     }
 
     int32_t &dl(IMD imd, int32_t idx)
@@ -70,11 +73,6 @@ public:
     int32_t &du(IMD imd, int32_t idx)
     {
         return dus[static_cast<int32_t>(imd) + idx * 3];
-    }
-
-    std::tuple<int32_t, int32_t> NM()
-    {
-        return std::make_tuple(N, M);
     }
 };
 

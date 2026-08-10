@@ -54,41 +54,9 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
     const int32_t idx_x = loop_minus<x, p>(idx, s);
     const int32_t idx_e = loop_minus<e, p>(idx, s);
     const int32_t idx_o = loop_minus<o + e, p>(idx, s);
-
     {
-        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
-        for (int32_t d = BiFr.dl(IMD::I, idx_e); std::cmp_less(d, BiFr.du(IMD::I, idx_e)); ++d)
-        {
-            int32_t f = BiFr.f(IMD::I, idx_e, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M))
-            {
-                dl = d;
-                break;
-            }
-        }
-        int32_t du = std::numeric_limits<int32_t>::min() / 2;
-        for (int32_t d = BiFr.du(IMD::I, idx_e) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::I, idx_e)); --d)
-        {
-            int32_t f = BiFr.f(IMD::I, idx_e, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M))
-            {
-                du = d + 1;
-                break;
-            }
-        }
-
+        int32_t dl = BiFr.dl(IMD::I, idx_e);
+        int32_t du = BiFr.du(IMD::I, idx_e);
         BiFr.dl(IMD::I, idx) = std::min(dl + 1, BiFr.dl(IMD::I, idx));
         BiFr.du(IMD::I, idx) = std::max(du + 1, BiFr.du(IMD::I, idx));
         for (int32_t d = dl; std::cmp_less(d, du); ++d)
@@ -98,40 +66,8 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
     }
 
     {
-        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
-        for (int32_t d = BiFr.dl(IMD::D, idx_e); std::cmp_less(d, BiFr.du(IMD::D, idx_e)); ++d)
-        {
-            int32_t f = BiFr.f(IMD::D, idx_e, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M))
-            {
-                dl = d;
-                break;
-            }
-        }
-
-        int32_t du = std::numeric_limits<int32_t>::min() / 2;
-        for (int32_t d = BiFr.du(IMD::D, idx_e) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::D, idx_e)); --d)
-        {
-            int32_t f = BiFr.f(IMD::D, idx_e, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M))
-            {
-                du = d + 1;
-                break;
-            }
-        }
-
+        int32_t dl = BiFr.dl(IMD::D, idx_e);
+        int32_t du = BiFr.du(IMD::D, idx_e);
         BiFr.dl(IMD::D, idx) = std::min(dl - 1, BiFr.dl(IMD::D, idx));
         BiFr.du(IMD::D, idx) = std::max(du - 1, BiFr.du(IMD::D, idx));
         for (int32_t d = dl; std::cmp_less(d, du); ++d)
@@ -141,106 +77,22 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
     }
 
     {
-        int32_t Idl = std::numeric_limits<int32_t>::max() / 2;
-        int32_t Ddl = std::numeric_limits<int32_t>::max() / 2;
-        for (int32_t d = BiFr.dl(IMD::M, idx_o); std::cmp_less(d, BiFr.du(IMD::M, idx_o)); ++d)
-        {
-            int32_t f = BiFr.f(IMD::M, idx_o, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M) && std::cmp_equal(Idl, std::numeric_limits<int32_t>::max() / 2))
-            {
-                Idl = d;
-            }
-            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M) && std::cmp_equal(Ddl, std::numeric_limits<int32_t>::max() / 2))
-            {
-                Ddl = d;
-            }
-            if (std::cmp_not_equal(Idl, std::numeric_limits<int32_t>::max() / 2) && std::cmp_not_equal(Ddl, std::numeric_limits<int32_t>::max() / 2))
-            {
-                break;
-            }
-        }
-
-        int32_t Idu = std::numeric_limits<int32_t>::min() / 2;
-        int32_t Ddu = std::numeric_limits<int32_t>::min() / 2;
-        for (int32_t d = BiFr.du(IMD::M, idx_o) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::M, idx_o)); --d)
-        {
-            int32_t f = BiFr.f(IMD::M, idx_o, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less_equal(m, M) && std::cmp_equal(Idu, std::numeric_limits<int32_t>::min() / 2))
-            {
-                Idu = d + 1;
-            }
-            if (std::cmp_less_equal(n, N) && std::cmp_less(m, M) && std::cmp_equal(Ddu, std::numeric_limits<int32_t>::min() / 2))
-            {
-                Ddu = d + 1;
-            }
-            if (std::cmp_not_equal(Idu, std::numeric_limits<int32_t>::min() / 2) && std::cmp_not_equal(Ddu, std::numeric_limits<int32_t>::min() / 2))
-            {
-                break;
-            }
-        }
-
-        BiFr.dl(IMD::I, idx) = std::min(Idl + 1, BiFr.dl(IMD::I, idx));
-        BiFr.du(IMD::I, idx) = std::max(Idu + 1, BiFr.du(IMD::I, idx));
-        BiFr.dl(IMD::D, idx) = std::min(Ddl - 1, BiFr.dl(IMD::D, idx));
-        BiFr.du(IMD::D, idx) = std::max(Ddu - 1, BiFr.du(IMD::D, idx));
-        for (int32_t d = Idl; std::cmp_less(d, Idu); ++d)
+        int32_t dl = BiFr.dl(IMD::M, idx_o);
+        int32_t du = BiFr.du(IMD::M, idx_o);
+        BiFr.dl(IMD::I, idx) = std::min(dl + 1, BiFr.dl(IMD::I, idx));
+        BiFr.du(IMD::I, idx) = std::max(du + 1, BiFr.du(IMD::I, idx));
+        BiFr.dl(IMD::D, idx) = std::min(dl - 1, BiFr.dl(IMD::D, idx));
+        BiFr.du(IMD::D, idx) = std::max(du - 1, BiFr.du(IMD::D, idx));
+        for (int32_t d = dl; std::cmp_less(d, du); ++d)
         {
             BiFr.f(IMD::I, idx, d + 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::I, idx, d + 1));
-        }
-
-        for (int32_t d = Ddl; std::cmp_less(d, Ddu); ++d)
-        {
             BiFr.f(IMD::D, idx, d - 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::D, idx, d - 1));
         }
     }
 
     {
-        int32_t dl = std::numeric_limits<int32_t>::max() / 2;
-        for (int32_t d = BiFr.dl(IMD::M, idx_x); std::cmp_less(d, BiFr.du(IMD::M, idx_x)); ++d)
-        {
-            int32_t f = BiFr.f(IMD::M, idx_x, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less(m, M))
-            {
-                dl = d;
-                break;
-            }
-        }
-
-        int32_t du = std::numeric_limits<int32_t>::min() / 2;
-        for (int32_t d = BiFr.du(IMD::M, idx_x) - 1; std::cmp_greater_equal(d, BiFr.dl(IMD::M, idx_x)); --d)
-        {
-            int32_t f = BiFr.f(IMD::M, idx_x, d);
-            if (std::cmp_less(f, 0))
-            {
-                continue;
-            }
-            int32_t n = (f + d) / 2;
-            int32_t m = (f - d) / 2;
-            if (std::cmp_less(n, N) && std::cmp_less(m, M))
-            {
-                du = d + 1;
-                break;
-            }
-        }
-
+        int32_t dl = BiFr.dl(IMD::M, idx_x);
+        int32_t du = BiFr.du(IMD::M, idx_x);
         BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
         BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
         for (int32_t d = dl; std::cmp_less(d, du); ++d)
@@ -296,6 +148,10 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
             }
             int32_t n = (f + d) / 2;
             int32_t m = (f - d) / 2;
+            if (std::cmp_greater_equal(n, N) || std::cmp_greater_equal(m, M))
+            {
+                continue;
+            }
             int32_t mu = extend<orientation>(q, t, n, m);
             BiFr.f(IMD::M, idx, d) += 2 * mu;
         }
@@ -303,9 +159,8 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
 }
 
 template <int32_t j, int32_t p>
-std::tuple<int32_t, int32_t, int32_t> try_jump(BiTable<p> &BiFr, int32_t s, int32_t idx)
+std::tuple<int32_t, int32_t, int32_t> try_jump(int32_t N, int32_t M, BiTable<p> &BiFr, int32_t s, int32_t idx)
 {
-    auto [N, M] = BiFr.NM();
     int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_b;
     int32_t f_b = std::numeric_limits<int32_t>::min() / 2;
@@ -324,9 +179,8 @@ std::tuple<int32_t, int32_t, int32_t> try_jump(BiTable<p> &BiFr, int32_t s, int3
 }
 
 template <IMD imd, int32_t o, int32_t p>
-std::tuple<int32_t, int32_t, int32_t> overlap_c(BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
+std::tuple<int32_t, int32_t, int32_t> overlap_c(int32_t N, int32_t M, BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
 {
-    auto [N, M] = BiFr.NM();
     int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_b, f_b;
     int32_t dl = BiFr.dl(imd, idx);
@@ -362,13 +216,13 @@ std::tuple<int32_t, int32_t, int32_t> overlap_c(BiTable<p> &BiFr, BiTable<p> &Bi
 }
 
 template <int32_t o, int32_t p>
-std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
+std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(int32_t N, int32_t M, BiTable<p> &BiFr, BiTable<p> &BiFr2, int32_t s, int32_t idx, int32_t s2l, int32_t s2u)
 {
     int32_t s_b = std::numeric_limits<int32_t>::max() / 2;
     int32_t d_b, f_b;
     char c_b = '\0';
     {
-        auto [s_c, d_c, f_c] = overlap_c<IMD::M, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::M, o, p>(N, M, BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -378,7 +232,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(BiTable<p>
         }
     }
     {
-        auto [s_c, d_c, f_c] = overlap_c<IMD::I, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::I, o, p>(N, M, BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -388,7 +242,7 @@ std::tuple<int32_t, int32_t, int32_t, char, int32_t, int32_t> overlap(BiTable<p>
         }
     }
     {
-        auto [s_c, d_c, f_c] = overlap_c<IMD::D, o, p>(BiFr, BiFr2, s, idx, s2l, s2u);
+        auto [s_c, d_c, f_c] = overlap_c<IMD::D, o, p>(N, M, BiFr, BiFr2, s, idx, s2l, s2u);
         if (s_c < s_b)
         {
             s_b = s_c;
@@ -467,7 +321,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
         next<x, o, e, j, p, 'F'>(q, t, BiFr_f, s, idx, c_f);
         if (c_r == 'L')
         {
-            auto [s_b, d_b, f_b] = try_jump<j, p>(BiFr_f, s, idx);
+            auto [s_b, d_b, f_b] = try_jump<j, p>(N, M, BiFr_f, s, idx);
             if (std::cmp_less(s_b, s_t))
             {
                 s_t = s_b;
@@ -480,7 +334,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
         next<x, o, e, j, p, 'R'>(q, t, BiFr_r, s, idx, c_r);
         if (c_f == 'L')
         {
-            auto [s_b, d_b, f_b] = try_jump<j, p>(BiFr_r, s, idx);
+            auto [s_b, d_b, f_b] = try_jump<j, p>(N, M, BiFr_r, s, idx);
             if (std::cmp_less(s_b, s_t))
             {
                 d_b = N - M - d_b;
@@ -505,7 +359,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
         if (std::cmp_greater_equal(anti_diag_upper + anti_diag_lower, M + N))
         {
             {
-                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p>(BiFr_f, BiFr_r, s, idx, s - p, s);
+                auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p>(N, M, BiFr_f, BiFr_r, s, idx, s - p, s);
                 if (s_b < s_t)
                 {
                     s_t = s_b;
@@ -518,7 +372,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
                 }
             }
             {
-                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap<o, p>(BiFr_r, BiFr_f, s, idx, s - p, s + 1);
+                auto [s_b, d_b, f_b, c_b, score_lower, score_upper] = overlap<o, p>(N, M, BiFr_r, BiFr_f, s, idx, s - p, s + 1);
                 if (s_b < s_t)
                 {
                     d_b = N - M - d_b;
