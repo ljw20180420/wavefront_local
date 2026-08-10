@@ -18,4 +18,4 @@ compile_lbiwfa() {
 # compile_lwfa
 # perf record -g cpp/benchmark/benchmark_lwfa 1000 100 100
 compile_lbiwfa
-perf record -g -F 10000 cpp/benchmark/benchmark_lbiwfa 1000 100 100
+perf record -g -F 40000 cpp/benchmark/benchmark_lbiwfa 1000 100 100
