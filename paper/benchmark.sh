@@ -132,8 +132,8 @@ benchmark_seqan() {
 lengths=$(parse_ini length)
 err_nums=$(parse_ini err_num)
 end_ups=$(parse_ini end_up)
-# benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
-benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
+benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
+# benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" diag
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" striped
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" scan
