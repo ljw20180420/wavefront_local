@@ -26,4 +26,5 @@ wheels/
 examples/*
 !examples/*.cpp
 !examples/*.sh
+!examples/*.py
 /wheelhouse

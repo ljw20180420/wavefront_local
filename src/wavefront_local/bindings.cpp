@@ -5,32 +5,34 @@
 
 namespace py = pybind11;
 
-std::tuple<int32_t, std::string> cpplwfa(std::string_view q, std::string_view t, const int32_t x, const int32_t o, const int32_t e, const int32_t j, const char c_f, const char c_r)
+std::tuple<int32_t, std::string> cpplwfa(std::string_view q, std::string_view t, std::string_view score, const char c_f, const char c_r)
 {
     FrontXM FrXM;
     Front FrI, FrD;
 
-    // get the optimal score
-    auto [s_t, d_t, f_t] = lwfa(q, t, x, o, e, j, c_f, c_r, FrXM, FrI, FrD);
-
-    // track the optimal alignment
-    std::string aln = track(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size(), x, o, e, j);
-    // Alignment string returned by track is reversed initially. Reverse it again to get the forward alignment string.
+    int32_t s_t, d_t, f_t;
+    std::string aln;
+    if (score == "bowtie")
+    {
+        std::tie(s_t, d_t, f_t) = lwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
+        aln = track<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
+    }
+    else if (score == "bwa")
+    {
+        std::tie(s_t, d_t, f_t) = lwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
+        aln = track<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
+    }
+    else
+    {
+        throw std::invalid_argument("score must be bowtie or bwa");
+    }
     std::reverse(aln.begin(), aln.end());
 
     return std::make_tuple(s_t, aln);
 }
 
-std::tuple<int32_t, std::string> cpplbiwfa(std::string_view q, std::string_view t, const int32_t x, const int32_t o, const int32_t e, const int32_t j, const char c_f, const char c_r)
+std::tuple<int32_t, std::string> cpplbiwfa(std::string_view q, std::string_view t, std::string_view score, const char c_f, const char c_r)
 {
-    // preallocate containers
-    int32_t p = std::max(x, o + e);
-    BiFront FrM_f('M', p + 1, 'F');
-    BiFront FrI_f('I', p + 1, 'F');
-    BiFront FrD_f('D', p + 1, 'F');
-    BiFront FrM_r('M', p + 1, 'R');
-    BiFront FrI_r('I', p + 1, 'R');
-    BiFront FrD_r('D', p + 1, 'R');
     FrontXM FrXM;
     Front FrI, FrD;
     std::string aln;
@@ -38,12 +40,27 @@ std::tuple<int32_t, std::string> cpplbiwfa(std::string_view q, std::string_view 
     // resize aln to hold the full alignment
     aln.resize(t.size() + q.size());
 
-    // get the optimal alignment
-    char *aln_t = lbiwfa(q, t, x, o, e, j, c_f, c_r, FrM_f, FrI_f, FrD_f, FrM_r, FrI_r, FrD_r, FrXM, FrI, FrD, aln.data());
-
-    // evaluate the score of the optimal alignment
-    aln.resize(aln_t - aln.data());
-    int32_t s_t = eval_score(aln, q, t, x, o, e, j);
+    int32_t s_t;
+    if (score == "bowtie")
+    {
+        BiTable<bowtie_wfa.p> BiFr_f;
+        BiTable<bowtie_wfa.p> BiFr_r;
+        char *aln_t = lbiwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j, bowtie_wfa.p>(q, t, c_f, c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln.data());
+        aln.resize(aln_t - aln.data());
+        s_t = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
+    }
+    else if (score == "bwa")
+    {
+        BiTable<bwa_wfa.p> BiFr_f;
+        BiTable<bwa_wfa.p> BiFr_r;
+        char *aln_t = lbiwfa<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j, bwa_wfa.p>(q, t, c_f, c_r, BiFr_f, BiFr_r, FrXM, FrI, FrD, aln.data());
+        aln.resize(aln_t - aln.data());
+        s_t = eval_score<bwa_wfa.x, bwa_wfa.o, bwa_wfa.e, bwa_wfa.j>(aln, q, t);
+    }
+    else
+    {
+        throw std::invalid_argument("score must be bowtie or bwa");
+    }
 
     return std::make_tuple(s_t, aln);
 }

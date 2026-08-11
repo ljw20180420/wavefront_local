@@ -6,10 +6,6 @@
 
 int main(int argc, char **argv)
 {
-    // load classical scoring system like bowtie
-    auto [l_c, x_c, o_c, e_c] = bowtie_score;
-    // transform the classical scoring system to the equivalent wavefront scoring system
-    auto [x, o, e, j] = score_system_canonical2wavefront(l_c, x_c, o_c, e_c);
     // set c_f (forward) and c_r (reverse) to one of:
     // L (local)
     // M (global)
@@ -26,10 +22,10 @@ int main(int argc, char **argv)
     std::string q = "TACGTGGTGCTCGGAAGGCTAGGAGAGTACGTTCGTGTACGTCTAAAAGGTTATCTGTGTCGACACCGAGATTAGAAACTTGCCGGGCCATAAATATTTC";
 
     // get the optimal score
-    auto [s_t, d_t, f_t] = lwfa(q, t, x, o, e, j, c_f, c_r, FrXM, FrI, FrD);
+    auto [s_t, d_t, f_t] = lwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
 
     // track the optimal alignment
-    std::string aln = track(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size(), x, o, e, j);
+    std::string aln = track<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
     std::reverse(aln.begin(), aln.end());
 
     std::cout << "score:\n"
