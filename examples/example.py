@@ -16,7 +16,7 @@ q = "TACGTGGTGCTCGGAAGGCTAGGAGAGTACGTTCGTGTACGTCTAAAAGGTTATCTGTGTCGACACCGAGATTAG
 
 s_t, aln = cpplwfa(q, t, "bowtie", c_f, c_r)
 print(f"score:\n{s_t}\nalign\n{aln}")
-s_t, aln = cpplbiwfa(q, t, "bwa", c_f, c_r)
+s_t, aln = cpplbiwfa(q, t, "bowtie", c_f, c_r)
 print(f"score:\n{s_t}\nalign\n{aln}")
 s_t, aln = pylwfa(q, t, x, o, e, j, c_f, c_r)
 print(f"score:\n{s_t}\nalign\n{aln}")
