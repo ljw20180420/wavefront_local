@@ -59,9 +59,15 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         int32_t du = BiFr.du(IMD::I, idx_e);
         BiFr.dl(IMD::I, idx) = std::min(dl + 1, BiFr.dl(IMD::I, idx));
         BiFr.du(IMD::I, idx) = std::max(du + 1, BiFr.du(IMD::I, idx));
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        int32_t ii = static_cast<int32_t>(IMD::I) + idx * 3 + (dl + 1 + BiFr.mid) * 3 * (p + 1);
+        int32_t jj = ii - 3 * (p + 1) - 3 * e;
+        if (std::cmp_greater_equal(idx_e, idx))
         {
-            BiFr.f(IMD::I, idx, d + 1) = std::max(BiFr.f(IMD::I, idx_e, d) + 1, BiFr.f(IMD::I, idx, d + 1));
+            jj += 3 * (p + 1);
+        }
+        for (int32_t d = dl; std::cmp_less(d, du); ++d, ii += 3 * (p + 1), jj += 3 * (p + 1))
+        {
+            BiFr.fs[ii] = std::max(BiFr.fs[jj] + 1, BiFr.fs[ii]);
         }
     }
 
@@ -70,9 +76,15 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         int32_t du = BiFr.du(IMD::D, idx_e);
         BiFr.dl(IMD::D, idx) = std::min(dl - 1, BiFr.dl(IMD::D, idx));
         BiFr.du(IMD::D, idx) = std::max(du - 1, BiFr.du(IMD::D, idx));
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        int32_t ii = static_cast<int32_t>(IMD::D) + idx * 3 + (dl - 1 + BiFr.mid) * 3 * (p + 1);
+        int32_t jj = ii + 3 * (p + 1) - 3 * e;
+        if (std::cmp_greater_equal(idx_e, idx))
         {
-            BiFr.f(IMD::D, idx, d - 1) = std::max(BiFr.f(IMD::D, idx_e, d) + 1, BiFr.f(IMD::D, idx, d - 1));
+            jj += 3 * (p + 1);
+        }
+        for (int32_t d = dl; std::cmp_less(d, du); ++d, ii += 3 * (p + 1), jj += 3 * (p + 1))
+        {
+            BiFr.fs[ii] = std::max(BiFr.fs[jj] + 1, BiFr.fs[ii]);
         }
     }
 
@@ -83,10 +95,18 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         BiFr.du(IMD::I, idx) = std::max(du + 1, BiFr.du(IMD::I, idx));
         BiFr.dl(IMD::D, idx) = std::min(dl - 1, BiFr.dl(IMD::D, idx));
         BiFr.du(IMD::D, idx) = std::max(du - 1, BiFr.du(IMD::D, idx));
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        int32_t jj = static_cast<int32_t>(IMD::M) + idx_o * 3 + (dl + BiFr.mid) * 3 * (p + 1);
+        int32_t iiI = jj + (static_cast<int32_t>(IMD::I) - static_cast<int32_t>(IMD::M)) + 3 * (p + 1) + 3 * (o + e);
+        int32_t iiD = jj + (static_cast<int32_t>(IMD::D) - static_cast<int32_t>(IMD::M)) - 3 * (p + 1) + 3 * (o + e);
+        if (std::cmp_greater_equal(idx_o, idx))
         {
-            BiFr.f(IMD::I, idx, d + 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::I, idx, d + 1));
-            BiFr.f(IMD::D, idx, d - 1) = std::max(BiFr.f(IMD::M, idx_o, d) + 1, BiFr.f(IMD::D, idx, d - 1));
+            iiI -= 3 * (p + 1);
+            iiD -= 3 * (p + 1);
+        }
+        for (int32_t d = dl; std::cmp_less(d, du); ++d, jj += 3 * (p + 1), iiI += 3 * (p + 1), iiD += 3 * (p + 1))
+        {
+            BiFr.fs[iiI] = std::max(BiFr.fs[jj] + 1, BiFr.fs[iiI]);
+            BiFr.fs[iiD] = std::max(BiFr.fs[jj] + 1, BiFr.fs[iiD]);
         }
     }
 
@@ -95,9 +115,15 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         int32_t du = BiFr.du(IMD::M, idx_x);
         BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
         BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
-        for (int32_t d = dl; std::cmp_less(d, du); ++d)
+        int32_t ii = static_cast<int32_t>(IMD::M) + idx * 3 + (dl + BiFr.mid) * 3 * (p + 1);
+        int32_t jj = ii - 3 * x;
+        if (std::cmp_greater_equal(idx_x, idx))
         {
-            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::M, idx_x, d) + 2, BiFr.f(IMD::M, idx, d));
+            jj += 3 * (p + 1);
+        }
+        for (int32_t d = dl; std::cmp_less(d, du); ++d, ii += 3 * (p + 1), jj += 3 * (p + 1))
+        {
+            BiFr.fs[ii] = std::max(BiFr.fs[jj] + 2, BiFr.fs[ii]);
         }
     }
 
@@ -106,9 +132,10 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         int32_t du = BiFr.du(IMD::I, idx);
         BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
         BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
-        for (int32_t d = dl; d < du; ++d)
+        int32_t ii = static_cast<int32_t>(IMD::M) + idx * 3 + (dl + BiFr.mid) * 3 * (p + 1);
+        for (int32_t d = dl; d < du; ++d, ii += 3 * (p + 1))
         {
-            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::I, idx, d), BiFr.f(IMD::M, idx, d));
+            BiFr.fs[ii] = std::max(BiFr.fs[ii + (static_cast<int32_t>(IMD::I) - static_cast<int32_t>(IMD::M))], BiFr.fs[ii]);
         }
     }
 
@@ -117,9 +144,10 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
         int32_t du = BiFr.du(IMD::D, idx);
         BiFr.dl(IMD::M, idx) = std::min(dl, BiFr.dl(IMD::M, idx));
         BiFr.du(IMD::M, idx) = std::max(du, BiFr.du(IMD::M, idx));
-        for (int32_t d = dl; d < du; ++d)
+        int32_t ii = static_cast<int32_t>(IMD::M) + idx * 3 + (dl + BiFr.mid) * 3 * (p + 1);
+        for (int32_t d = dl; d < du; ++d, ii += 3 * (p + 1))
         {
-            BiFr.f(IMD::M, idx, d) = std::max(BiFr.f(IMD::D, idx, d), BiFr.f(IMD::M, idx, d));
+            BiFr.fs[ii] = std::max(BiFr.fs[ii + (static_cast<int32_t>(IMD::D) - static_cast<int32_t>(IMD::M))], BiFr.fs[ii]);
         }
     }
 

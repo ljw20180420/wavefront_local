@@ -19,13 +19,12 @@ enum class IMD
 template <int32_t p>
 class BiTable
 {
-private:
+public:
     int32_t mid;
     std::vector<int32_t> fs;
     std::array<int32_t, 3 * (p + 1)> dls;
     std::array<int32_t, 3 * (p + 1)> dus;
 
-public:
     BiTable()
     {
         mid = 0;
