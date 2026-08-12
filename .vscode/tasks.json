@@ -136,7 +136,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "-std=c++23",
+                "-std=gnu++23",
                 "-Iinclude",
                 "benchmark/benchmark_seqan.cpp",
                 "-o",

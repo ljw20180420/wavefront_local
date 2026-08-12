@@ -107,7 +107,7 @@ benchmark_seqan() {
     local err_nums=$2
     local end_ups=$3
 
-    g++ -O3 -std=c++23 \
+    g++ -O3 -std=gnu++23 \
         -Icpp/include \
         cpp/benchmark/benchmark_seqan.cpp \
         -o cpp/benchmark/benchmark_seqan
@@ -133,8 +133,8 @@ lengths=$(parse_ini length)
 err_nums=$(parse_ini err_num)
 end_ups=$(parse_ini end_up)
 # benchmark_lwfa "${lengths}" "${err_nums}" "${end_ups}"
-benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
+# benchmark_lbiwfa "${lengths}" "${err_nums}" "${end_ups}"
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" diag
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" striped
 # benchmark_parasail "${lengths}" "${err_nums}" "${end_ups}" scan
-# benchmark_seqan "${lengths}" "${err_nums}" "${end_ups}"
+benchmark_seqan "${lengths}" "${err_nums}" "${end_ups}"
