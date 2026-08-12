@@ -342,6 +342,7 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
     char c_t = '\0';
     int32_t anti_diag_upper = -1;
     int32_t anti_diag_lower = -1;
+    bool anti_diag_cross = false;
     int32_t score_upper_t, score_lower_t;
     char split; // F (forward jump) or R (reverse jump) or P (path)
     while (std::cmp_less(2 * s - o - p, s_t))
@@ -375,16 +376,20 @@ char *lbiwfa(std::string_view q, std::string_view t, char c_f, char c_r, BiTable
             }
         }
 
-        for (int32_t d = BiFr_f.dl(IMD::M, idx); std::cmp_less(d, BiFr_f.du(IMD::M, idx)); ++d)
+        if (!anti_diag_cross)
         {
-            anti_diag_upper = std::max(BiFr_f.f(IMD::M, idx, d), anti_diag_upper);
-        }
-        for (int32_t d = BiFr_r.dl(IMD::M, idx); std::cmp_less(d, BiFr_r.du(IMD::M, idx)); ++d)
-        {
-            anti_diag_lower = std::max(BiFr_r.f(IMD::M, idx, d), anti_diag_lower);
+            for (int32_t d = BiFr_f.dl(IMD::M, idx); std::cmp_less(d, BiFr_f.du(IMD::M, idx)); ++d)
+            {
+                anti_diag_upper = std::max(BiFr_f.f(IMD::M, idx, d), anti_diag_upper);
+            }
+            for (int32_t d = BiFr_r.dl(IMD::M, idx); std::cmp_less(d, BiFr_r.du(IMD::M, idx)); ++d)
+            {
+                anti_diag_lower = std::max(BiFr_r.f(IMD::M, idx, d), anti_diag_lower);
+            }
+            anti_diag_cross = std::cmp_greater_equal(anti_diag_upper + anti_diag_lower, M + N);
         }
 
-        if (std::cmp_greater_equal(anti_diag_upper + anti_diag_lower, M + N))
+        if (anti_diag_cross)
         {
             {
                 auto [s_b, d_b, f_b, c_b, score_upper, score_lower] = overlap<o, p>(N, M, BiFr_f, BiFr_r, s, idx, s - p, s);
