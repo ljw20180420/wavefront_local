@@ -14,7 +14,7 @@
 #include <functional>
 
 template <int32_t gap, int32_t p>
-int32_t loop_minus(int32_t idx, int32_t s)
+int32_t loop_minus(int32_t idx)
 {
     int32_t idx_ = idx - gap;
     if (std::cmp_greater_equal(idx_, 0))
@@ -25,7 +25,7 @@ int32_t loop_minus(int32_t idx, int32_t s)
 }
 
 template <int32_t p>
-int32_t loop_minus(int32_t idx, int32_t s, int32_t gap)
+int32_t loop_minus(int32_t idx, int32_t gap)
 {
     int32_t idx_ = idx - gap;
     if (std::cmp_greater_equal(idx_, 0))
@@ -51,9 +51,9 @@ void next(const std::string_view q, const std::string_view t, BiTable<p> &BiFr, 
 {
     const int32_t N = q.size();
     const int32_t M = t.size();
-    const int32_t idx_x = loop_minus<x, p>(idx, s);
-    const int32_t idx_e = loop_minus<e, p>(idx, s);
-    const int32_t idx_o = loop_minus<o + e, p>(idx, s);
+    const int32_t idx_x = loop_minus<x, p>(idx);
+    const int32_t idx_e = loop_minus<e, p>(idx);
+    const int32_t idx_o = loop_minus<o + e, p>(idx);
     {
         int32_t dl = BiFr.dl(IMD::I, idx_e);
         int32_t du = BiFr.du(IMD::I, idx_e);
@@ -215,7 +215,7 @@ std::tuple<int32_t, int32_t, int32_t> overlap_c(int32_t N, int32_t M, BiTable<p>
     int32_t du = BiFr.du(imd, idx);
     for (int32_t s2 = s2l; s2 < s2u; ++s2)
     {
-        int32_t idx2 = loop_minus<p>(idx, s, s - s2);
+        int32_t idx2 = loop_minus<p>(idx, s - s2);
         int32_t d2l = BiFr2.dl(imd, idx2);
         int32_t d2u = BiFr2.du(imd, idx2);
         for (int32_t d = std::max(dl, N - M - d2u + 1); std::cmp_less(d, std::min(du, N - M - d2l + 1)); ++d)
