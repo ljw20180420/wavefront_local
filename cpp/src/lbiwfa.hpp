@@ -1,8 +1,6 @@
 #pragma once
 
-#include "front.hpp"
 #include "bifront.hpp"
-#include "lbiwfa.hpp"
 #include "lwfa.hpp"
 #include <string>
 #include <utility>
