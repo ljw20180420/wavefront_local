@@ -1,7 +1,0 @@
-{
-    "C_Cpp.default.cppStandard": "gnu++23",
-    "C_Cpp.default.compilerArgs": [
-        "-std=gnu++23"
-    ],
-    "C_Cpp.default.compilerPath": "/usr/bin/g++-13"
-}
