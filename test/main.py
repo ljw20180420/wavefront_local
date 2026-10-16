@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+from collections.abc import Callable
 from dataclasses import dataclass, field
 
 import pandas as pd
@@ -24,13 +25,14 @@ from wavefront_local.test import generate_random_reads
 @dataclass(frozen=True)
 class TestConfig:
     sim_data_config: SimDataConfig
+    align_func: Callable
 
     def __post_init__(self):
         object.__setattr__(
             self, "data_dir", pathlib.Path("data") / self.sim_data_config.align_mode
         )
         object.__setattr__(
-            self, "align_dir", pathlib.Path("data") / self.sim_data_config.align_mode
+            self, "align_dir", pathlib.Path("align") / self.align_func.__name__ / self.sim_data_config.score_schema / mode pathlib.Path("data") / self.sim_data_config.align_mode
         )
 
 

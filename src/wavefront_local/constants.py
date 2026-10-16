@@ -19,5 +19,25 @@ class BWASchema:
 
 @dataclass(frozen=True)
 class ScoreSchema:
-    bowtie: BowtieSchema = field(default=BowtieSchema(), init=False)
-    bwa: BWASchema = field(default=BWASchema(), init=False)
+    l_c: int
+    x_c: int
+    o_c: int
+    e_c: int
+
+    @classmethod
+    def bowtie(cls):
+        return cls(
+            l_c=2,
+            x_c=6,
+            o_c=5,
+            e_c=3,
+        )
+
+    @classmethod
+    def bwa(cls):
+        return cls(
+            l_c=1,
+            x_c=4,
+            o_c=6,
+            e_c=1,
+        )

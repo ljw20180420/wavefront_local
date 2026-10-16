@@ -104,10 +104,14 @@ In preparation.
 # TODO
 
 ```
+- get rid of read_ini in python by using dataclass
+- remove cpp test, test cpp by python language binding
+- add realdata benchmark
 - add a diagram to illustrate the lwfa algorithm
 - compare lbiwfa and lwfa cell figure
-- clarify github build
+- clarify github action build
 - clarify wheelhouse
+- clarify uv with scikit-build-core and pybind11
 - check plos computational biology
 - skip calculation for $s<e,o+e,x$
 - optimize out intialization of fs
