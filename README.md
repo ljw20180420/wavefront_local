@@ -104,6 +104,10 @@ In preparation.
 # TODO
 
 ```
+- add a diagram to illustrate the lwfa algorithm
+- compare lbiwfa and lwfa cell figure
+- clarify github build
+- clarify wheelhouse
 - check plos computational biology
 - skip calculation for $s<e,o+e,x$
 - optimize out intialization of fs

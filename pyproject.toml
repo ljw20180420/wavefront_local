@@ -9,7 +9,6 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "biopython>=1.87",
-    "jinja2>=3.1.6",
     "numpy>=2.4.6",
     "pandas>=3.0.3",
 ]
@@ -37,7 +36,6 @@ sdist.include = [
 
 [tool.uv]
 cache-keys = [
-    { file = "pyproject.toml" },
     { file = "cpp/src/**/*.{h,c,hpp,cpp}" },
     { file = "src/wavefront_local/bindings.cpp" },
     { file = "CMakeLists.txt"},
@@ -52,4 +50,5 @@ dev = [
     "cibuildwheel>=4.1.0",
     "plotnine>=0.15.7",
     "tqdm>=4.68.4",
+    "jinja2>=3.1.6",
 ]
