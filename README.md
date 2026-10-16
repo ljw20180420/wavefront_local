@@ -104,6 +104,7 @@ In preparation.
 # TODO
 
 ```
+- check plos computational biology
 - skip calculation for $s<e,o+e,x$
 - optimize out intialization of fs
 - SeqAn3 introduces highly optimized, native low-bit alphabets like seqan3::dna4 (which uses only 2 bits per base to represent A, C, G, T) and seqan3::dna5

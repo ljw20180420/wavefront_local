@@ -23,8 +23,8 @@ wheels/
 /cpp/parasail
 /cpp/include/seqan3
 /cpp/include/mdspan
-examples/*
-!examples/*.cpp
-!examples/*.sh
-!examples/*.py
+/examples/*
+!/examples/*.cpp
+!/examples/*.sh
+!/examples/*.py
 /wheelhouse
