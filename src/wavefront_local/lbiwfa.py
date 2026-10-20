@@ -18,7 +18,7 @@ def next(
     j: int,
     c: Literal["M", "I", "D", "L"],
 ) -> defaultdict:
-    for d in Fr["M"][s - o - e].keys():
+    for d in Fr["M"][s - o - e]:
         f = Fr["M"][s - o - e][d]
         n = (f + d) // 2
         m = (f - d) // 2
@@ -27,43 +27,43 @@ def next(
         if m < len(t):
             Fr["D"][s][d - 1] = max(f + 1, Fr["D"][s][d - 1])
 
-    for d in Fr["I"][s - e].keys():
+    for d in Fr["I"][s - e]:
         f = Fr["I"][s - e][d]
         n = (f + d) // 2
         if n < len(q):
             Fr["I"][s][d + 1] = max(f + 1, Fr["I"][s][d + 1])
 
-    for d in Fr["D"][s - e].keys():
+    for d in Fr["D"][s - e]:
         f = Fr["D"][s - e][d]
         m = (f - d) // 2
         if m < len(t):
             Fr["D"][s][d - 1] = max(f + 1, Fr["D"][s][d - 1])
 
-    for d in Fr["M"][s - x].keys():
+    for d in Fr["M"][s - x]:
         f = Fr["M"][s - x][d]
         n = (f + d) // 2
         m = (f - d) // 2
         if n < len(q) and m < len(t):
             Fr["M"][s][d] = max(f + 2, Fr["M"][s][d])
 
-    for d in Fr["I"][s].keys():
+    for d in Fr["I"][s]:
         Fr["M"][s][d] = max(Fr["I"][s][d], Fr["M"][s][d])
 
-    for d in Fr["D"][s].keys():
+    for d in Fr["D"][s]:
         Fr["M"][s][d] = max(Fr["D"][s][d], Fr["M"][s][d])
 
     if c == "L" and s % j == 0:
         f = s // j
         for d in range(max(-f, f - 2 * len(t)), min(f, 2 * len(q) - f) + 1, 2):
             Fr["M"][s][d] = max(f, Fr["M"][s][d])
-    for d in Fr["M"][s].keys():
+    for d in Fr["M"][s]:
         mu = extend(q, t, Fr["M"][s][d], d)
         Fr["M"][s][d] += 2 * mu
 
     p = max(x, o + e)
-    for c in Fr.keys():
-        if s - p - 1 in Fr[c]:
-            del Fr[c][s - p - 1]
+    for cc in Fr:
+        if s - p - 1 in Fr[cc]:
+            del Fr[cc][s - p - 1]
 
     return Fr
 
@@ -99,7 +99,7 @@ def overlap(
     score_lower = None
     for c in ["M", "I", "D"]:
         for s2 in s2range:
-            for d in Fr[c][s].keys():
+            for d in Fr[c][s]:
                 d2 = N - M - d
                 if d2 in Fr2[c][s2] and Fr[c][s][d] + Fr2[c][s2][d2] >= N + M:
                     new_score = s + s2

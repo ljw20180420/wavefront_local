@@ -54,7 +54,7 @@ def lwfa(
     )
     Fr[c_f][0][0] = Cell(0, None, None, None)
     while s_t > s:
-        for d in Fr["M"][s - o - e].keys():
+        for d in Fr["M"][s - o - e]:
             f = Fr["M"][s - o - e][d].f
             n = (f + d) // 2
             m = (f - d) // 2
@@ -63,29 +63,29 @@ def lwfa(
             if m < len(t):
                 Fr["D"][s][d - 1].update(f + 1, "M", s - o - e, d)
 
-        for d in Fr["I"][s - e].keys():
+        for d in Fr["I"][s - e]:
             f = Fr["I"][s - e][d].f
             n = (f + d) // 2
             if n < len(q):
                 Fr["I"][s][d + 1].update(f + 1, "I", s - e, d)
 
-        for d in Fr["D"][s - e].keys():
+        for d in Fr["D"][s - e]:
             f = Fr["D"][s - e][d].f
             m = (f - d) // 2
             if m < len(t):
                 Fr["D"][s][d - 1].update(f + 1, "D", s - e, d)
 
-        for d in Fr["M"][s - x].keys():
+        for d in Fr["M"][s - x]:
             f = Fr["M"][s - x][d].f
             n = (f + d) // 2
             m = (f - d) // 2
             if n < len(q) and m < len(t):
                 Fr["X"][s][d].update(f + 2, "M", s - x, d)
 
-        for d in Fr["I"][s].keys():
+        for d in Fr["I"][s]:
             Fr["X"][s][d].update(Fr["I"][s][d].f, "I", s, d)
 
-        for d in Fr["D"][s].keys():
+        for d in Fr["D"][s]:
             Fr["X"][s][d].update(Fr["D"][s][d].f, "D", s, d)
 
         if c_f == "L" and s % j == 0:
@@ -97,12 +97,12 @@ def lwfa(
             ):
                 Fr["X"][s][d].update(f, "L", 0, 0)
 
-        for d in Fr["X"][s].keys():
+        for d in Fr["X"][s]:
             mu = extend(q, t, Fr["X"][s][d].f, d)
             Fr["M"][s][d].update(Fr["X"][s][d].f + 2 * mu, "X", s, d)
 
         if c_r == "L":
-            for d in Fr["M"][s].keys():
+            for d in Fr["M"][s]:
                 new_score = s + (len(q) + len(t) - Fr["M"][s][d].f) * j
                 if new_score < s_t:
                     s_t = new_score
@@ -157,8 +157,8 @@ def track(c_r: Literal["M", "I", "D", "L"], s_t: int, d_t: int, Fr: defaultdict)
 def countM(Fr: defaultdict, M: int, N: int) -> tuple[int, int]:
     M_count = 0
     dp_table = np.zeros((M + 1, N + 1), dtype=np.int8)
-    for s in Fr["M"].keys():
-        for d in Fr["M"][s].keys():
+    for s in Fr["M"]:
+        for d in Fr["M"][s]:
             nX = (Fr["X"][s][d].f + d) // 2
             mX = (Fr["X"][s][d].f - d) // 2
             nM = (Fr["M"][s][d].f + d) // 2
