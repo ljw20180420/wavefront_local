@@ -3,8 +3,7 @@ from collections import defaultdict
 from enum import Enum, auto
 from typing import Literal
 
-from .lwfa import lwfa, track
-from .utils import extend
+from .lwfa import extend, lwfa, track
 
 
 def next(

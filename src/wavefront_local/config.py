@@ -1,4 +1,8 @@
-def test_config():
+import os
+import pathlib
+
+
+def test_config() -> dict:
     return {
         "size": 100,
         "lengths": [100, 200],
@@ -11,7 +15,7 @@ def test_config():
     }
 
 
-def bench_config():
+def bench_config() -> dict:
     return {
         "size": 100,
         "lengths": [250, 500, 1000, 2000, 4000],
@@ -24,3 +28,7 @@ def bench_config():
             "memory": 2,
         },
     }
+
+
+def real_config() -> dict:
+    return {"real_dir": pathlib.Path(os.environ["HOME"]) / "sdb1" / "lwfa"}
