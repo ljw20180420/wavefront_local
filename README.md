@@ -104,12 +104,10 @@ In preparation.
 # TODO
 
 ```
+- check whether mdspan can be removed
 - move core code outside pkg into pkg
 - prefix auxilary func by _
 - rearrange pkg such that each file abstract certain concept
-- decouple sim data and align
-- make sim and align functional
-- align abstract score_schema, c_f, c_r and so on
 - test python example in test
 
 - troubleshooting
@@ -117,7 +115,6 @@ In preparation.
   - 从DDBJ下载
   - 比对ncbi，ebi，DDBJ
 
-- get rid of read_ini in python by using dataclass
 - remove cpp test, test cpp by python language binding
 - add realdata benchmark
 - mv long proof to supplementary information

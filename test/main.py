@@ -6,7 +6,7 @@ import pathlib
 from wavefront_local import config, test
 
 if __name__ == "__main__":
-    os.chdir(pathlib.Path(__file__).parent)
+    os.chdir(pathlib.Path(__file__).resolve().parent)
 
     cfg = config.test_config()
     for length in cfg["lengths"]:

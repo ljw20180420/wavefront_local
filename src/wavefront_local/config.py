@@ -9,3 +9,18 @@ def test_config():
         "score_schemas": ["bowtie", "bwa"],
         "aligner": ["pylwfa", "pylbiwfa", "cpplwfa", "cpplbiwfa"],
     }
+
+
+def bench_config():
+    return {
+        "size": 100,
+        "lengths": [250, 500, 1000, 2000, 4000],
+        "err_nums": [10, 100],
+        "end_ups": [10, 100],
+        "seed": 63036,
+        "methods": ["lwfa", "lbiwfa", "diag", "scan", "seqan", "striped"],
+        "precision": {
+            "time": 2,
+            "memory": 2,
+        },
+    }
