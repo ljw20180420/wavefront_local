@@ -665,7 +665,6 @@ version = "0.1.4"
 source = { editable = "." }
 dependencies = [
     { name = "biopython" },
-    { name = "jinja2" },
     { name = "numpy" },
     { name = "pandas" },
 ]
@@ -673,6 +672,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "cibuildwheel" },
+    { name = "jinja2" },
     { name = "plotnine" },
     { name = "tqdm" },
 ]
@@ -680,7 +680,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "biopython", specifier = ">=1.87" },
-    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "numpy", specifier = ">=2.4.6" },
     { name = "pandas", specifier = ">=3.0.3" },
 ]
@@ -688,6 +687,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "cibuildwheel", specifier = ">=4.1.0" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "plotnine", specifier = ">=0.15.7" },
     { name = "tqdm", specifier = ">=4.68.4" },
 ]

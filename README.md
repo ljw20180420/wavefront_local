@@ -104,31 +104,46 @@ In preparation.
 # TODO
 
 ```
+- move core code outside pkg into pkg
+- prefix auxilary func by _
+- rearrange pkg such that each file abstract certain concept
+- decouple sim data and align
+- make sim and align functional
+- align abstract score_schema, c_f, c_r and so on
+- test python example in test
+
+- troubleshooting
+  - 从NCBI下载sra-tools (prefetch)
+  - 从DDBJ下载
+  - 比对ncbi，ebi，DDBJ
+
 - get rid of read_ini in python by using dataclass
 - remove cpp test, test cpp by python language binding
 - add realdata benchmark
+- mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm
 - compare lbiwfa and lwfa cell figure
 - clarify github action build
 - clarify wheelhouse
 - clarify uv with scikit-build-core and pybind11
 - check plos computational biology
+
 - skip calculation for $s<e,o+e,x$
 - optimize out intialization of fs
 - SeqAn3 introduces highly optimized, native low-bit alphabets like seqan3::dna4 (which uses only 2 bits per base to represent A, C, G, T) and seqan3::dna5
 - SeqAn3 handles dynamic programming matrices by utilizing specialized allocation stripes and structures that recycle memory buffers.
 - compact custom alphabets (bit vector)
 
-- [ ] Skip useless jumping at diagonals which have been passed by previous low-score waves. This prevent redundant extension, thereby the time complexity no longer depends on x.
+- Skip useless jumping at diagonals which have been passed by previous low-score waves. This prevent redundant extension, thereby the time complexity no longer depends on x.
   - Prove the correctness of skipping useless jumping as follows.
     - The optimal score keep.
     - The iteration get Fr (wavefront).
     - The optimal score is achieved at Fr.
     - The iteration skipping useless jumping achieves optimal score.
-- [ ] Implement the technique in the paper: Improving the time and space complexity of the WFA algorithm and generalizing its scoring.
-- [ ] find sota library for efficient implementaion
-  - [ ] bit vector for recording alignment
-  - [ ] efficient sparse matrix
-- [ ] manual simd
-- [ ] webassembly
+- Implement the technique in the paper: Improving the time and space complexity of the WFA algorithm and generalizing its scoring.
+- find sota library for efficient implementaion
+  - bit vector for recording alignment
+  - efficient sparse matrix
+- manual simd
+- webassembly
 ```
