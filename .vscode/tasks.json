@@ -2,69 +2,6 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "test ini",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "-std=gnu++23",
-                "test/test_ini.cpp",
-                "-o",
-                "test/test_ini"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/cpp"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build",
-            "detail": "Build ini test."
-        },
-        {
-            "type": "cppbuild",
-            "label": "test lwfa",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "-std=gnu++23",
-                "test/test_lwfa.cpp",
-                "-o",
-                "test/test_lwfa"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/cpp"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build",
-            "detail": "Build lwfa test."
-        },
-        {
-            "type": "cppbuild",
-            "label": "test lbiwfa",
-            "command": "/usr/bin/g++",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "-std=gnu++23",
-                "test/test_lbiwfa.cpp",
-                "-o",
-                "test/test_lbiwfa"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/cpp"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build",
-            "detail": "Build lbiwfa test."
-        },
-        {
-            "type": "cppbuild",
             "label": "benchmark lwfa",
             "command": "/usr/bin/g++",
             "args": [
