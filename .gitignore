@@ -16,8 +16,6 @@ wheels/
 !/paper/benchmark/result
 !/paper/benchmark.ini
 !/paper/benchmark.sh
-/cpp/test/*
-!/cpp/test/*.cpp
 /cpp/benchmark/*
 !/cpp/benchmark/*.cpp
 /cpp/parasail

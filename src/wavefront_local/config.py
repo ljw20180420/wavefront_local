@@ -32,19 +32,28 @@ def bench_config() -> dict:
 
 def real_config() -> dict:
     return {
-        "short": {"accession": "ERR091574"},
+        "short": {
+            "accession": "ERR091574",
+            "hs1": pathlib.Path(os.environ["HOME"])
+            / ".local"
+            / "share"
+            / "genomes"
+            / "hs1"
+            / "index"
+            / "bowtie2"
+            / "hs1",
+        },
         "long": {
             "url": "https://sra-pub-src-1.s3.amazonaws.com/ERR3278877/BOWDEN03_20161104_FNFAB42715_MN16561_WTON000140_NA12878.fast5.tgz.2",
             "accession": "ERR3278877",
-            "filename": "BOWDEN03_20161104_FNFAB42715_MN16561_WTON000140_NA12878.fast5.tgz.2",
+            "hs1": pathlib.Path(os.environ["HOME"])
+            / ".local"
+            / "share"
+            / "genomes"
+            / "hs1"
+            / "index"
+            / "minimap2"
+            / "hs1",
         },
         "real_dir": pathlib.Path(os.environ["HOME"]) / "sdb1" / "lwfa",
-        "hs1": pathlib.Path(os.environ["HOME"])
-        / ".local"
-        / "share"
-        / "genomes"
-        / "hs1"
-        / "index"
-        / "bowtie2"
-        / "hs1",
     }

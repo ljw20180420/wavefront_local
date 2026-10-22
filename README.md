@@ -115,7 +115,6 @@ In preparation.
   - 从DDBJ下载
   - 比对ncbi，ebi，DDBJ
 
-- remove cpp test, test cpp by python language binding
 - add realdata benchmark
 - mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm
