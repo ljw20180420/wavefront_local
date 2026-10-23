@@ -20,7 +20,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.3.1
       - name: Build SDist
-        run: pipx run build --sdist
+        run: pipx run uv build --sdist
       - name: Move wheel to dist
         run: mv wheelhouse/*.whl -t dist/
       - uses: pypa/gh-action-pypi-publish@release/v1

@@ -119,8 +119,6 @@ In preparation.
 - mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm
 - compare lbiwfa and lwfa cell figure
-- clarify github action build
-- clarify wheelhouse
 - clarify uv with scikit-build-core and pybind11
 - check plos computational biology
 

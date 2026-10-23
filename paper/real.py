@@ -115,12 +115,26 @@ def get_pod5_from_fast5(cfg: dict):
     )
 
 
+def download_model(cfg: dict):
+    model_dir = cfg["real_dir"] / cfg["long"]["accession"] / "model"
+    model_dir.mkdir(exist_ok=True, parents=True)
+    sh.dorado.download(
+        model=cfg["long"]["model"],
+        models_directory=model_dir,
+        _out=sys.stdout,
+        _err=sys.stderr,
+    )
+
+
 def call_base_pod5(cfg: dict):
     sh.dorado.basecaller(
-        "fast",
+        cfg["real_dir"] / cfg["long"]["accession"] / "model" / cfg["long"]["model"],
         cfg["real_dir"] / cfg["long"]["accession"] / f"{cfg['long']['accession']}.pod5",
         reference=cfg["long"]["hs1"],
-        _out=cfg["real_dir"] / cfg["long"]["accession"] / "calls.bam",
+        _out=cfg["real_dir"]
+        / cfg["long"]["accession"]
+        / f"{cfg['long']['accession']}.bam",
+        _err=sys.stderr,
     )
 
 
@@ -130,5 +144,6 @@ if __name__ == "__main__":
     # align_short_reads(cfg)
     # download_long_reads(cfg)
     # single_to_multi_fast5(cfg)
-    get_pod5_from_fast5(cfg)
-    # call_base_pod5(cfg)
+    # get_pod5_from_fast5(cfg)
+    # download_model(cfg)
+    call_base_pod5(cfg)

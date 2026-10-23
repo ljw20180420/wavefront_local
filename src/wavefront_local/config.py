@@ -11,11 +11,12 @@ def test_config() -> dict:
         "align_modes": ["local", "global"],
         "seed": 63036,
         "score_schemas": ["bowtie", "bwa"],
-        "aligner": ["pylwfa", "pylbiwfa", "cpplwfa", "cpplbiwfa"],
+        "aligners": ["pylwfa", "pylbiwfa", "cpplwfa", "cpplbiwfa"],
+        "generate": False,
     }
 
 
-def bench_config() -> dict:
+def sim_config() -> dict:
     return {
         "size": 100,
         "lengths": [250, 500, 1000, 2000, 4000],
@@ -46,6 +47,7 @@ def real_config() -> dict:
         "long": {
             "url": "https://sra-pub-src-1.s3.amazonaws.com/ERR3278877/BOWDEN03_20161104_FNFAB42715_MN16561_WTON000140_NA12878.fast5.tgz.2",
             "accession": "ERR3278877",
+            "model": "dna_r9.4.1_e8_sup@v3.6",
             "hs1": pathlib.Path(os.environ["HOME"])
             / ".local"
             / "share"
@@ -53,7 +55,7 @@ def real_config() -> dict:
             / "hs1"
             / "index"
             / "minimap2"
-            / "hs1",
+            / "hs1.mmi",
         },
         "real_dir": pathlib.Path(os.environ["HOME"]) / "sdb1" / "lwfa",
     }
