@@ -3,12 +3,15 @@
 import os
 import pathlib
 
+import matplotlib
+import pandas as pd
 import sh
+from plotnine import aes, geom_line, ggplot, scale_x_continuous, scale_y_continuous
 
 from wavefront_local import config, test
 
 
-def generate_sim_bench(cfg: dict):
+def generate_sim(cfg: dict):
     for length in cfg["lengths"]:
         for err_num in cfg["err_nums"]:
             for end_up in cfg["end_ups"]:
@@ -61,6 +64,7 @@ def bench_sim(cfg: dict):
         for method in methods:
             with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
                 fd.write("length,err_num,end_up,time,memory\n")
+                fd.flush()
                 for length in cfg["lengths"]:
                     for err_num in cfg["err_nums"]:
                         for end_up in cfg["end_ups"]:
@@ -73,10 +77,47 @@ def bench_sim(cfg: dict):
                             )
 
 
+def draw_sim(cfg: dict):
+    matplotlib.use("Agg")
+
+    dfs = []
+    for methods in cfg["libs"].values():
+        for method in methods:
+            df = pd.read_csv(f"paper/sim/result/{method}.csv", header=0)
+            df["method"] = method
+            dfs.append(df)
+
+    df = pd.concat(dfs, ignore_index=True)
+    cfg["figure_dir"].mkdir(exist_ok=True, parents=True)
+    cfg["table_dir"].mkdir(exist_ok=True, parents=True)
+
+    for err_num in cfg["err_nums"]:
+        for end_up in cfg["end_ups"]:
+            df_filter: pd.DataFrame = df.query(
+                "err_num == @err_num and end_up == @end_up"
+            ).reset_index(drop=True)
+            for target in ["time", "memory"]:
+                df_filter.pivot_table(
+                    values=target, index="method", columns="length"
+                ).rename_axis(index=None, columns=None).style.format(
+                    escape=True, precision=cfg[f"{target}_precision"]
+                ).to_latex(buf=cfg["table_dir"] / f"{target}_{err_num}_{end_up}.tex")
+                (
+                    ggplot(
+                        data=df_filter,
+                        mapping=aes(x="length", y=target, color="method"),
+                    )
+                    + geom_line()
+                    + scale_y_continuous(name=target, trans="log10")
+                    + scale_x_continuous(name="length")
+                ).save(cfg["figure_dir"] / f"{target}_{err_num}_{end_up}.pdf")
+
+
 if __name__ == "__main__":
     os.chdir(pathlib.Path(__file__).resolve().parent.parent)
     cfg = config.sim_config()
 
-    # generate_sim_bench(cfg)
-    compile_sim(cfg)
+    # generate_sim(cfg)
+    # compile_sim(cfg)
     bench_sim(cfg)
+    # draw_sim(cfg)

@@ -104,6 +104,14 @@ In preparation.
 # TODO
 
 ```
+- 先完成作图，整理格式，攥写文章
+- learn
+  - uv
+  - sckkit-build-core
+  - cmake
+  - pybind11
+  - vscode debug
+
 - check whether mdspan can be removed
 - move core code outside pkg into pkg
 - prefix auxilary func by _

@@ -35,6 +35,8 @@ def sim_config() -> dict:
         },
         "cpp_dir": pathlib.Path("cpp/bench"),
         "result_dir": pathlib.Path("paper/sim/result"),
+        "figure_dir": pathlib.Path("paper/sim/figure"),
+        "table_dir": pathlib.Path("paper/sim/table"),
     }
 
 
