@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
     double total_time = 0.0;
 
-    std::string benchmark_file = "paper/benchmark/data/" + length + '_' + err_num + '_' + end_up + ".csv";
+    std::string benchmark_file = "paper/sim/data/" + length + '_' + err_num + '_' + end_up + ".csv";
     std::cerr << benchmark_file << '\n';
 
     std::ifstream fin(benchmark_file);

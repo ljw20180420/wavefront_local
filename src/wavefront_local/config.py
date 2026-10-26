@@ -23,11 +23,18 @@ def sim_config() -> dict:
         "err_nums": [10, 100],
         "end_ups": [10, 100],
         "seed": 63036,
-        "methods": ["lwfa", "lbiwfa", "diag", "scan", "seqan", "striped"],
+        "libs": {
+            "lwfa": ["lwfa"],
+            "lbiwfa": ["lbiwfa"],
+            "seqan": ["seqan"],
+            "parasail": ["diag", "scan", "striped"],
+        },
         "precision": {
             "time": 2,
             "memory": 2,
         },
+        "cpp_dir": pathlib.Path("cpp/bench"),
+        "result_dir": pathlib.Path("paper/sim/result"),
     }
 
 

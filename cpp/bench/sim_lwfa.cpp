@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     FrontXM FrXM;
     Front FrI, FrD;
 
-    std::string benchmark_file = "paper/benchmark/data/" + length + '_' + err_num + '_' + end_up + ".csv";
+    std::string benchmark_file = "paper/sim/data/" + length + '_' + err_num + '_' + end_up + ".csv";
     std::cerr << benchmark_file << '\n';
 
     std::ifstream fin(benchmark_file);

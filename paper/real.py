@@ -146,4 +146,4 @@ if __name__ == "__main__":
     # single_to_multi_fast5(cfg)
     # get_pod5_from_fast5(cfg)
     # download_model(cfg)
-    call_base_pod5(cfg)
+    # call_base_pod5(cfg)

@@ -15,8 +15,8 @@ wheels/
 /paper/sim/
 !/paper/benchmark.ini
 !/paper/benchmark.sh
-/cpp/benchmark/*
-!/cpp/benchmark/*.cpp
+/cpp/bench/*
+!/cpp/bench/*.cpp
 /cpp/parasail
 /cpp/include/seqan3
 /cpp/include/mdspan

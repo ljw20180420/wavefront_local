@@ -110,11 +110,6 @@ In preparation.
 - rearrange pkg such that each file abstract certain concept
 - test python example in test
 
-- troubleshooting
-  - 从NCBI下载sra-tools (prefetch)
-  - 从DDBJ下载
-  - 比对ncbi，ebi，DDBJ
-
 - add realdata benchmark
 - mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm
