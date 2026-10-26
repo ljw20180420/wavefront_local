@@ -2,15 +2,15 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "benchmark lwfa",
+            "label": "bench sim lwfa",
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=gnu++23",
-                "benchmark/benchmark_lwfa.cpp",
+                "bench/sim_lwfa.cpp",
                 "-o",
-                "benchmark/benchmark_lwfa"
+                "bench/sim_lwfa"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cpp"
@@ -19,19 +19,19 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "Build lwfa benchmark."
+            "detail": "Build sim lwfa."
         },
         {
             "type": "cppbuild",
-            "label": "benchmark lbiwfa",
+            "label": "bench sim lbiwfa",
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=gnu++23",
-                "benchmark/benchmark_lbiwfa.cpp",
+                "bench/sim_lbiwfa.cpp",
                 "-o",
-                "benchmark/benchmark_lbiwfa"
+                "bench/sim_lbiwfa"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cpp"
@@ -40,22 +40,22 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "Build lbiwfa benchmark."
+            "detail": "Build sim lbiwfa."
         },
         {
             "type": "cppbuild",
-            "label": "benchmark parasail",
+            "label": "bench sim parasail",
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=gnu++23",
-                "benchmark/benchmark_parasail.cpp",
+                "bench/sim_parasail.cpp",
                 "-L./parasail/build",
                 "-lparasail",
                 "-Wl,-rpath,'$ORIGIN/../parasail/build'",
                 "-o",
-                "benchmark/benchmark_parasail"
+                "bench/sim_parasail"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cpp"
@@ -64,20 +64,20 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "Build parasail benchmark."
+            "detail": "Build sim parasail."
         },
         {
             "type": "cppbuild",
-            "label": "benchmark seqan",
+            "label": "bench sim seqan",
             "command": "/usr/bin/g++",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "-std=gnu++23",
                 "-Iinclude",
-                "benchmark/benchmark_seqan.cpp",
+                "bench/sim_seqan.cpp",
                 "-o",
-                "benchmark/benchmark_seqan"
+                "bench/sim_seqan"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cpp"
@@ -86,7 +86,7 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "Build seqan benchmark."
+            "detail": "Build sim seqan."
         },
     ],
     "version": "2.0.0"

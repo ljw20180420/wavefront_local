@@ -1,63 +1,29 @@
 #include "../src/lwfa.hpp"
 #include "../src/score.hpp"
-#include "../src/system.hpp"
+#include "bench.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
-#include <string>
 #include <cstdlib>
 #include <algorithm>
-#include <chrono>
 #include <utility>
 
 int main(int argc, char **argv)
 {
-    limit_memory(30UL * 1024UL * 1024UL * 1024UL);
-    if (argc < 4)
-    {
-        std::exit(1);
-    }
-    std::string length = argv[1];
-    std::string err_num = argv[2];
-    std::string end_up = argv[3];
+    Bench bench = Bench(argc, argv);
 
     char c_f = 'L';
     char c_r = 'L';
 
-    double total_time = 0.0;
-
     FrontXM FrXM;
     Front FrI, FrD;
 
-    std::string benchmark_file = "paper/sim/data/" + length + '_' + err_num + '_' + end_up + ".csv";
-    std::cerr << benchmark_file << '\n';
-
-    std::ifstream fin(benchmark_file);
-    if (!fin.is_open())
+    for (const auto &[t, q] : bench)
     {
-        std::cerr << "Error: Could not open file.\n";
-        std::exit(1);
-    }
-
-    std::string line;
-    std::getline(fin, line);
-    while (std::getline(fin, line))
-    {
-        std::string t, q;
-        std::stringstream ss(line);
-        std::getline(ss, t, ',');
-        std::getline(ss, q);
-
-        auto start = std::chrono::high_resolution_clock::now();
+        bench.tic();
 
         auto [s_t, d_t, f_t] = lwfa<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(q, t, c_f, c_r, FrXM, FrI, FrD);
         std::string aln = track<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(c_f, c_r, s_t, d_t, f_t, FrXM, FrI, FrD, t.size(), q.size());
-        doNotOptimize(aln);
-
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> elapsed = end - start;
+        bench.doNotOptimize(aln);
 
         // std::reverse(aln.begin(), aln.end());
         // int32_t s_t_aln = eval_score<bowtie_wfa.x, bowtie_wfa.o, bowtie_wfa.e, bowtie_wfa.j>(aln, q, t);
@@ -67,7 +33,7 @@ int main(int argc, char **argv)
         //     std::exit(1);
         // }
 
-        total_time += elapsed.count();
+        bench.toc();
     }
-    std::cout << length << ',' << err_num << ',' << end_up << ',' << total_time << ',' << peak_rss() << std::endl;
+    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

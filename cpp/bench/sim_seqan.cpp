@@ -1,51 +1,32 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alignment/all.hpp>
 #include "../src/score.hpp"
-#include "../src/system.hpp"
+#include "bench.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
-#include <string>
 #include <cstdlib>
 #include <algorithm>
-#include <chrono>
 #include <utility>
 
 int main(int argc, char **argv)
 {
-    limit_memory(30UL * 1024UL * 1024UL * 1024UL);
-    if (argc < 4)
-    {
-        std::exit(1);
-    }
-    std::string length = argv[1];
-    std::string err_num = argv[2];
-    std::string end_up = argv[3];
+    Bench bench = Bench(argc, argv);
 
     auto [l_c, x_c, o_c, e_c] = bowtie_score;
 
-    double total_time = 0.0;
+    // Configure the alignment kernel.
+    auto config = seqan3::align_cfg::method_local{} |
+                  seqan3::align_cfg::scoring_scheme{
+                      seqan3::nucleotide_scoring_scheme{
+                          seqan3::match_score{l_c},
+                          seqan3::mismatch_score{-x_c}}} |
+                  seqan3::align_cfg::gap_cost_affine{
+                      seqan3::align_cfg::open_score{-o_c},
+                      seqan3::align_cfg::extension_score{-e_c}};
 
-    std::string benchmark_file = "paper/sim/data/" + length + '_' + err_num + '_' + end_up + ".csv";
-    std::cerr << benchmark_file << '\n';
-
-    std::ifstream fin(benchmark_file);
-    if (!fin.is_open())
+    for (const auto &[t, q] : bench)
     {
-        std::cerr << "Error: Could not open file.\n";
-        std::exit(1);
-    }
-
-    std::string line;
-    std::getline(fin, line);
-    while (std::getline(fin, line))
-    {
-        std::string t, q;
-        std::stringstream ss(line);
-        std::getline(ss, t, ',');
-        std::getline(ss, q);
+        bench.tic();
 
         seqan3::dna4_vector s1, s2;
         s1.resize(t.size());
@@ -54,18 +35,6 @@ int main(int argc, char **argv)
         s2.resize(q.size());
         for (size_t i = 0; i < q.size(); ++i)
             s2[i].assign_char(q[i]);
-
-        // Configure the alignment kernel.
-        auto config = seqan3::align_cfg::method_local{} |
-                      seqan3::align_cfg::scoring_scheme{
-                          seqan3::nucleotide_scoring_scheme{
-                              seqan3::match_score{l_c},
-                              seqan3::mismatch_score{-x_c}}} |
-                      seqan3::align_cfg::gap_cost_affine{
-                          seqan3::align_cfg::open_score{-o_c},
-                          seqan3::align_cfg::extension_score{-e_c}};
-
-        auto start = std::chrono::high_resolution_clock::now();
 
         // Invoke the pairwise alignment which returns a lazy range over alignment results.
         auto results = seqan3::align_pairwise(std::tie(s1, s2), config);
@@ -77,13 +46,10 @@ int main(int argc, char **argv)
         std::string str1{std::ranges::begin(view1), std::ranges::end(view1)};
         std::string str2{std::ranges::begin(view2), std::ranges::end(view2)};
 
-        doNotOptimize(str1);
-        doNotOptimize(str2);
+        bench.doNotOptimize(str1);
+        bench.doNotOptimize(str2);
 
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> elapsed = end - start;
-
-        total_time += elapsed.count();
+        bench.toc();
     };
-    std::cout << length << ',' << err_num << ',' << end_up << ',' << total_time << ',' << peak_rss() << std::endl;
+    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

@@ -1,11 +1,11 @@
 {
     "configurations": [
         {
-            "name": "debug benchmark lwfa",
+            "name": "debug sim lwfa",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cpp/benchmark/benchmark_lwfa",
-            "args": ["250", "10", "10"],
+            "program": "${workspaceFolder}/cpp/bench/sim_lwfa",
+            "args": ["250", "10", "10", "lwfa"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -28,15 +28,15 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "benchmark lwfa",
+            "preLaunchTask": "bench sim lwfa",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
-            "name": "debug benchmark lbiwfa",
+            "name": "debug sim lbiwfa",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cpp/benchmark/benchmark_lbiwfa",
-            "args": ["250", "10", "10"],
+            "program": "${workspaceFolder}/cpp/bench/sim_lbiwfa",
+            "args": ["250", "10", "10", "lbiwfa"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -59,14 +59,14 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "benchmark lbiwfa",
+            "preLaunchTask": "bench sim lbiwfa",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
-            "name": "debug benchmark parasail",
+            "name": "debug sim parasail",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cpp/benchmark/benchmark_parasail",
+            "program": "${workspaceFolder}/cpp/bench/sim_parasail",
             "args": ["250", "10", "10", "striped"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -90,15 +90,15 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "benchmark parasail",
+            "preLaunchTask": "bench sim parasail",
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
-            "name": "debug benchmark seqan",
+            "name": "debug sim seqan",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cpp/benchmark/benchmark_seqan",
-            "args": ["250", "10", "10"],
+            "program": "${workspaceFolder}/cpp/bench/sim_seqan",
+            "args": ["250", "10", "10", "seqan"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -121,7 +121,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "benchmark seqan",
+            "preLaunchTask": "bench sim seqan",
             "miDebuggerPath": "/usr/bin/gdb"
         },
     ],

@@ -112,7 +112,6 @@ In preparation.
   - pybind11
   - vscode debug
 
-- check whether mdspan can be removed
 - move core code outside pkg into pkg
 - prefix auxilary func by _
 - rearrange pkg such that each file abstract certain concept

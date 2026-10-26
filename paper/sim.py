@@ -63,7 +63,7 @@ def bench_sim(cfg: dict):
     for methods in cfg["libs"].values():
         for method in methods:
             with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
-                fd.write("length,err_num,end_up,time,memory\n")
+                fd.write("length,err_num,end_up,time,memory,method\n")
                 fd.flush()
                 for length in cfg["lengths"]:
                     for err_num in cfg["err_nums"]:
@@ -80,14 +80,14 @@ def bench_sim(cfg: dict):
 def draw_sim(cfg: dict):
     matplotlib.use("Agg")
 
-    dfs = []
-    for methods in cfg["libs"].values():
-        for method in methods:
-            df = pd.read_csv(f"paper/sim/result/{method}.csv", header=0)
-            df["method"] = method
-            dfs.append(df)
-
-    df = pd.concat(dfs, ignore_index=True)
+    df = pd.concat(
+        [
+            pd.read_csv(cfg["result_dir"] / f"{method}.csv", header=0)
+            for methods in cfg["libs"].values()
+            for method in methods
+        ],
+        ignore_index=True,
+    )
     cfg["figure_dir"].mkdir(exist_ok=True, parents=True)
     cfg["table_dir"].mkdir(exist_ok=True, parents=True)
 
@@ -100,7 +100,7 @@ def draw_sim(cfg: dict):
                 df_filter.pivot_table(
                     values=target, index="method", columns="length"
                 ).rename_axis(index=None, columns=None).style.format(
-                    escape=True, precision=cfg[f"{target}_precision"]
+                    escape=True, precision=cfg["precision"][target]
                 ).to_latex(buf=cfg["table_dir"] / f"{target}_{err_num}_{end_up}.tex")
                 (
                     ggplot(
@@ -118,6 +118,6 @@ if __name__ == "__main__":
     cfg = config.sim_config()
 
     # generate_sim(cfg)
-    # compile_sim(cfg)
-    bench_sim(cfg)
+    compile_sim(cfg)
+    # bench_sim(cfg)
     # draw_sim(cfg)
