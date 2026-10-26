@@ -17,6 +17,7 @@ wheels/
 !/paper/benchmark.sh
 /cpp/bench/*
 !/cpp/bench/*.cpp
+!/cpp/bench/*.hpp
 /cpp/parasail
 /cpp/include/seqan3
 /cpp/include/mdspan

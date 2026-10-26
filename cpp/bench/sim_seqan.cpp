@@ -1,5 +1,6 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alignment/all.hpp>
+#include <seqan3/utility/range/all.hpp>
 #include "../src/score.hpp"
 #include "bench.hpp"
 
@@ -28,13 +29,8 @@ int main(int argc, char **argv)
     {
         bench.tic();
 
-        seqan3::dna4_vector s1, s2;
-        s1.resize(t.size());
-        for (size_t i = 0; i < t.size(); ++i)
-            s1[i].assign_char(t[i]);
-        s2.resize(q.size());
-        for (size_t i = 0; i < q.size(); ++i)
-            s2[i].assign_char(q[i]);
+        auto s1 = t | seqan3::views::char_to<seqan3::dna4> | seqan3::ranges::to<seqan3::dna4_vector>();
+        auto s2 = q | seqan3::views::char_to<seqan3::dna4> | seqan3::ranges::to<seqan3::dna4_vector>();
 
         // Invoke the pairwise alignment which returns a lazy range over alignment results.
         auto results = seqan3::align_pairwise(std::tie(s1, s2), config);
@@ -51,5 +47,5 @@ int main(int argc, char **argv)
 
         bench.toc();
     };
-    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
+    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.method << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

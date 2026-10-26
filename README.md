@@ -104,6 +104,7 @@ In preparation.
 # TODO
 
 ```
+- rerun bench when third generation alignment finishes
 - 先完成作图，整理格式，攥写文章
 - learn
   - uv

@@ -63,7 +63,7 @@ def bench_sim(cfg: dict):
     for methods in cfg["libs"].values():
         for method in methods:
             with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
-                fd.write("length,err_num,end_up,time,memory,method\n")
+                fd.write("length,err_num,end_up,method,time,memory\n")
                 fd.flush()
                 for length in cfg["lengths"]:
                     for err_num in cfg["err_nums"]:
@@ -119,5 +119,5 @@ if __name__ == "__main__":
 
     # generate_sim(cfg)
     compile_sim(cfg)
-    # bench_sim(cfg)
-    # draw_sim(cfg)
+    bench_sim(cfg)
+    draw_sim(cfg)
