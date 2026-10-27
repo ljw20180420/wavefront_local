@@ -3,23 +3,20 @@
 import os
 import pathlib
 
-import matplotlib
-import pandas as pd
 import sh
 from compile import compile_libs
-from plotnine import aes, geom_line, ggplot, scale_x_continuous, scale_y_continuous
 
 from wavefront_local import config, test
 
 
 def generate_sim(cfg: dict):
-    cfg["data_dir"].mkdir(exist_ok=True, parents=True)
-    for length in cfg["lengths"]:
-        for err_num in cfg["err_nums"]:
-            for end_up in cfg["end_ups"]:
-                data_file = cfg["data_dir"] / f"{length}_{err_num}_{end_up}.csv"
+    cfg["sim"]["data_dir"].mkdir(exist_ok=True, parents=True)
+    for length in cfg["sim"]["lengths"]:
+        for err_num in cfg["sim"]["err_nums"]:
+            for end_up in cfg["sim"]["end_ups"]:
+                data_file = cfg["sim"]["data_dir"] / f"{length}_{err_num}_{end_up}.csv"
                 test.generate_sim_data(
-                    size=cfg["size"],
+                    size=cfg["sim"]["size"],
                     length=length,
                     err=err_num / length,
                     end_up=end_up,
@@ -30,70 +27,33 @@ def generate_sim(cfg: dict):
 
 
 def bench_sim(cfg: dict):
-    cfg["result_dir"].mkdir(exist_ok=True, parents=True)
+    compile_libs(cfg)
+    cfg["sim"]["result_dir"].mkdir(exist_ok=True, parents=True)
     for lib, methods in cfg["libs"].items():
         for method in methods:
-            with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
+            with open(cfg["sim"]["result_dir"] / f"{method}.csv", "w") as fd:
                 fd.write("length,err_num,end_up,method,time,memory\n")
-                for length in cfg["lengths"]:
-                    for err_num in cfg["err_nums"]:
-                        for end_up in cfg["end_ups"]:
+                for length in cfg["sim"]["lengths"]:
+                    for err_num in cfg["sim"]["err_nums"]:
+                        for end_up in cfg["sim"]["end_ups"]:
                             data_file = (
-                                cfg["data_dir"] / f"{length}_{err_num}_{end_up}.csv"
+                                cfg["sim"]["data_dir"]
+                                / f"{length}_{err_num}_{end_up}.csv"
                             )
                             fd.writelines(
                                 f"{length},{err_num},{end_up},{method},{time_memory}"
-                                for time_memory in sh.Command(
-                                    cfg["cpp_dir"] / f"bench_{lib}"
-                                )(
+                                for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
                                     data_file,
+                                    lib,
                                     method,
                                     _iter=True,
                                 )
                             )
 
 
-def draw_sim(cfg: dict):
-    matplotlib.use("Agg")
-
-    df = pd.concat(
-        [
-            pd.read_csv(cfg["result_dir"] / f"{method}.csv", header=0)
-            for methods in cfg["libs"].values()
-            for method in methods
-        ],
-        ignore_index=True,
-    )
-    cfg["figure_dir"].mkdir(exist_ok=True, parents=True)
-    cfg["table_dir"].mkdir(exist_ok=True, parents=True)
-
-    for err_num in cfg["err_nums"]:
-        for end_up in cfg["end_ups"]:
-            df_filter: pd.DataFrame = df.query(
-                "err_num == @err_num and end_up == @end_up"
-            ).reset_index(drop=True)
-            for target in ["time", "memory"]:
-                df_filter.pivot_table(
-                    values=target, index="method", columns="length"
-                ).rename_axis(index=None, columns=None).style.format(
-                    escape=True, precision=cfg["precision"][target]
-                ).to_latex(buf=cfg["table_dir"] / f"{target}_{err_num}_{end_up}.tex")
-                (
-                    ggplot(
-                        data=df_filter,
-                        mapping=aes(x="length", y=target, color="method"),
-                    )
-                    + geom_line()
-                    + scale_y_continuous(name=target, trans="log10")
-                    + scale_x_continuous(name="length")
-                ).save(cfg["figure_dir"] / f"{target}_{err_num}_{end_up}.pdf")
-
-
 if __name__ == "__main__":
     os.chdir(pathlib.Path(__file__).resolve().parent.parent)
-    cfg = config.sim_config()
+    cfg = config.bench_config()
 
     # generate_sim(cfg)
-    # compile_libs(cfg)
-    # bench_sim(cfg)
-    draw_sim(cfg)
+    bench_sim(cfg)
