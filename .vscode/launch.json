@@ -1,13 +1,13 @@
 {
     "configurations": [
         {
-            "name": "debug sim lwfa",
+            "name": "C/C++: g++ build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cpp/bench/sim_lwfa",
-            "args": ["250", "10", "10", "lwfa"],
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": ["${workspaceFolder}/test/data/local/200_0.05_10.csv", "${input:lib}", "${input:method}"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${fileDirname}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -28,102 +28,34 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "bench sim lwfa",
+            "preLaunchTask": "C/C++: g++ build active file",
             "miDebuggerPath": "/usr/bin/gdb"
+        },
+    ],
+    "inputs": [
+        {
+            "id": "lib",
+            "type": "pickString",
+            "description": "Select library:",
+            "options": [
+                "lwfa",
+                "lbiwfa",
+                "parasail",
+                "seqan",
+            ],
+            "default": "lwfa"
         },
         {
-            "name": "debug sim lbiwfa",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/cpp/bench/sim_lbiwfa",
-            "args": ["250", "10", "10", "lbiwfa"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Clear debuginfod URLs",
-                    "text": "set debuginfod urls ",
-                    "ignoreFailures": true
-                }
+            "id": "method",
+            "type": "pickString",
+            "description": "Select parasail method:",
+            "options": [
+                "striped",
+                "scan",
+                "diag"
             ],
-            "preLaunchTask": "bench sim lbiwfa",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
-        {
-            "name": "debug sim parasail",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/cpp/bench/sim_parasail",
-            "args": ["250", "10", "10", "striped"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Clear debuginfod URLs",
-                    "text": "set debuginfod urls ",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "bench sim parasail",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
-        {
-            "name": "debug sim seqan",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/cpp/bench/sim_seqan",
-            "args": ["250", "10", "10", "seqan"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Clear debuginfod URLs",
-                    "text": "set debuginfod urls ",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "bench sim seqan",
-            "miDebuggerPath": "/usr/bin/gdb"
-        },
+            "default": "striped"
+        }
     ],
     "version": "2.0.0"
 }

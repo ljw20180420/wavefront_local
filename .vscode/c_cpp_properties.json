@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/cpp/src",
+                "${workspaceFolder}/cpp/bench",
                 "${workspaceFolder}/cpp/include/**"
             ],
             "cppStandard": "gnu++23",
