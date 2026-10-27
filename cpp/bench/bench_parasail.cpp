@@ -11,6 +11,13 @@ int main(int argc, char **argv)
 {
     Bench bench = Bench(argc, argv);
 
+    if (argc < 3)
+    {
+        std::cerr << "method is not provided\n";
+        exit(1);
+    }
+    std::string method = argv[2];
+
     auto [l_c, x_c, o_c, e_c] = bowtie_score;
 
     for (const auto &[t, q] : bench)
@@ -20,11 +27,11 @@ int main(int argc, char **argv)
 
         bench.tic();
 
-        if (bench.method == "striped")
+        if (method == "striped")
         {
             result = parasail_sw_trace_striped_sat(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
         }
-        else if (bench.method == "scan")
+        else if (method == "scan")
         {
             result = parasail_sw_trace_scan_sat(t.c_str(), t.size(), q.c_str(), q.size(), o_c, e_c, matrix);
         }
@@ -38,5 +45,5 @@ int main(int argc, char **argv)
 
         bench.toc();
     };
-    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.method << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
+    std::cout << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

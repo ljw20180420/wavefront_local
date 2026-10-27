@@ -3,6 +3,7 @@
 import os
 import sys
 
+import numpy as np
 import pandas as pd
 import pysam
 import sh
@@ -11,7 +12,7 @@ from ont_fast5_api.conversion_tools.single_to_multi_fast5 import (
 )
 from pod5.tools.pod5_convert_from_fast5 import convert_from_fast5
 
-from wavefront_local import config
+from wavefront_local import config, test
 
 
 def download_short_reads(cfg: dict) -> None:
@@ -167,23 +168,33 @@ def generate_short_data(cfg: dict):
     texts = []
     queries = []
 
+    rng = np.random.default_rng(cfg["seed"])
     with pysam.AlignmentFile(cfg["real_dir"] / "ERR091574/ERR091574.bam") as bam:
         for read in bam.fetch():
-            if read.is_unmapped():
+            if read.is_unmapped:
                 continue
 
-            text = read.get_reference_sequence()
-            query = read.query_sequence
+            text = read.get_reference_sequence().upper()
+            tup, tdown = rng.integers(low=0, high=cfg["short"]["end_up"] + 1, size=2)
+            text = (
+                test._random_DNA(tup, rng)
+                + text[tup : len(text) - tdown]
+                + test._random_DNA(tdown, rng)
+            )
+
+            query = read.query_sequence.upper()
+
             texts.append(text)
-            query.append(query)
+            queries.append(query)
 
             if len(texts) >= cfg["short"]["size"]:
                 break
 
-    pd.Dataframe({
+    cfg["data_dir"].mkdir(exist_ok=True, parents=True)
+    pd.DataFrame({
         "text": texts,
         "query": queries,
-    }).to_csv("paper")
+    }).to_csv(cfg["data_dir"] / "short.csv", index=False)
 
 
 if __name__ == "__main__":
@@ -191,9 +202,9 @@ if __name__ == "__main__":
     # download_short_reads(cfg)
     # align_short_reads(cfg)
     # index_short_bam(cfg)
+    generate_short_data(cfg)
     # download_long_reads(cfg)
     # single_to_multi_fast5(cfg)
     # get_pod5_from_fast5(cfg)
     # download_model(cfg)
     # call_base_pod5(cfg)
-    # generate_short_data(cfg)

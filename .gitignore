@@ -13,6 +13,7 @@ wheels/
 /test/align
 
 /paper/sim/
+/paper/real/
 !/paper/benchmark.ini
 !/paper/benchmark.sh
 /cpp/bench/*

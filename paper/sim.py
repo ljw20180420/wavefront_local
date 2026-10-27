@@ -6,6 +6,7 @@ import pathlib
 import matplotlib
 import pandas as pd
 import sh
+from compile import compile_libs
 from plotnine import aes, geom_line, ggplot, scale_x_continuous, scale_y_continuous
 
 from wavefront_local import config, test
@@ -28,51 +29,27 @@ def generate_sim(cfg: dict):
                 )
 
 
-def compile_sim(cfg: dict):
-    for lib in cfg["libs"]:
-        if lib == "seqan":
-            sh.Command("g++")(
-                "-O3",
-                "-std=gnu++23",
-                "-Icpp/include",
-                cfg["cpp_dir"] / f"sim_{lib}.cpp",
-                o=cfg["cpp_dir"] / f"sim_{lib}",
-            )
-        elif lib == "parasail":
-            sh.Command("g++")(
-                "-O3",
-                "-std=gnu++23",
-                cfg["cpp_dir"] / f"sim_{lib}.cpp",
-                "-L./cpp/parasail/build",
-                "-lparasail",
-                "-Wl,-rpath,'$ORIGIN/../parasail/build'",
-                o=cfg["cpp_dir"] / f"sim_{lib}",
-            )
-        else:
-            sh.Command("g++")(
-                "-O3",
-                "-std=gnu++23",
-                cfg["cpp_dir"] / f"sim_{lib}.cpp",
-                o=cfg["cpp_dir"] / f"sim_{lib}",
-            )
-
-
 def bench_sim(cfg: dict):
     cfg["result_dir"].mkdir(exist_ok=True, parents=True)
     for lib, methods in cfg["libs"].items():
         for method in methods:
             with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
                 fd.write("length,err_num,end_up,method,time,memory\n")
-                fd.flush()
                 for length in cfg["lengths"]:
                     for err_num in cfg["err_nums"]:
                         for end_up in cfg["end_ups"]:
-                            sh.Command(cfg["cpp_dir"] / f"sim_{lib}")(
-                                length,
-                                err_num,
-                                end_up,
-                                method,
-                                _out=fd,
+                            data_file = (
+                                cfg["data_dir"] / f"{length}_{err_num}_{end_up}.csv"
+                            )
+                            fd.writelines(
+                                f"{length},{err_num},{end_up},{method},{time_memory}"
+                                for time_memory in sh.Command(
+                                    cfg["cpp_dir"] / f"bench_{lib}"
+                                )(
+                                    data_file,
+                                    method,
+                                    _iter=True,
+                                )
                             )
 
 
@@ -117,6 +94,6 @@ if __name__ == "__main__":
     cfg = config.sim_config()
 
     # generate_sim(cfg)
-    # compile_sim(cfg)
+    # compile_libs(cfg)
     # bench_sim(cfg)
-    # draw_sim(cfg)
+    draw_sim(cfg)

@@ -47,5 +47,5 @@ int main(int argc, char **argv)
 
         bench.toc();
     };
-    std::cout << bench.length << ',' << bench.err_num << ',' << bench.end_up << ',' << bench.method << ',' << bench.total_time << ',' << bench.peak_rss() << std::endl;
+    std::cout << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

@@ -97,10 +97,6 @@ private:
     }
 
 public:
-    std::string length;
-    std::string err_num;
-    std::string end_up;
-    std::string method;
     std::string data_file;
     double total_time;
     std::chrono::_V2::system_clock::time_point start;
@@ -109,16 +105,12 @@ public:
     {
         limit_memory(30UL * 1024UL * 1024UL * 1024UL);
 
-        if (argc < 5)
+        if (argc < 2)
         {
-            std::exit(1);
+            std::cerr << "data file is not provided\n";
+            exit(1);
         }
-        length = argv[1];
-        err_num = argv[2];
-        end_up = argv[3];
-        method = argv[4];
-
-        data_file = "paper/sim/data/" + length + '_' + err_num + '_' + end_up + ".csv";
+        data_file = argv[1];
         std::cerr << data_file << '\n';
 
         total_time = 0.0;
@@ -146,8 +138,7 @@ public:
         total_time += elapsed.count();
     }
 
-    long
-    peak_rss()
+    long peak_rss()
     {
         struct rusage usage;
         getrusage(RUSAGE_SELF, &usage);

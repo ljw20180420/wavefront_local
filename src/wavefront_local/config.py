@@ -16,6 +16,18 @@ def test_config() -> dict:
     }
 
 
+def compile_config() -> dict:
+    return {
+        "cpp_dir": pathlib.Path("cpp/bench"),
+        "libs": {
+            "lwfa": ["lwfa"],
+            "lbiwfa": ["lbiwfa"],
+            "seqan": ["seqan"],
+            "parasail": ["diag", "scan", "striped"],
+        },
+    }
+
+
 def sim_config() -> dict:
     return {
         "size": 100,
@@ -23,18 +35,12 @@ def sim_config() -> dict:
         "err_nums": [10, 100],
         "end_ups": [10, 100],
         "seed": 63036,
-        "libs": {
-            "lwfa": ["lwfa"],
-            "lbiwfa": ["lbiwfa"],
-            "seqan": ["seqan"],
-            "parasail": ["diag", "scan", "striped"],
-        },
+        **compile_config(),
         "precision": {
             "time": 2,
             "memory": 2,
         },
         "data_dir": pathlib.Path("paper/sim/data"),
-        "cpp_dir": pathlib.Path("cpp/bench"),
         "result_dir": pathlib.Path("paper/sim/result"),
         "figure_dir": pathlib.Path("paper/sim/figure"),
         "table_dir": pathlib.Path("paper/sim/table"),
@@ -54,6 +60,7 @@ def real_config() -> dict:
             / "bowtie2"
             / "hs1",
             "size": 100_000,
+            "end_up": 10,
         },
         "long": {
             "url": "https://sra-pub-src-1.s3.amazonaws.com/ERR3278877/BOWDEN03_20161104_FNFAB42715_MN16561_WTON000140_NA12878.fast5.tgz.2",
@@ -68,6 +75,7 @@ def real_config() -> dict:
             / "minimap2"
             / "hs1.mmi",
         },
+        "seed": 63036,
         "real_dir": pathlib.Path(os.environ["HOME"]) / "sdb1" / "lwfa",
         "data_dir": pathlib.Path("paper/real/data"),
     }
