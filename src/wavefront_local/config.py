@@ -33,6 +33,7 @@ def sim_config() -> dict:
             "time": 2,
             "memory": 2,
         },
+        "data_dir": pathlib.Path("paper/sim/data"),
         "cpp_dir": pathlib.Path("cpp/bench"),
         "result_dir": pathlib.Path("paper/sim/result"),
         "figure_dir": pathlib.Path("paper/sim/figure"),
@@ -52,6 +53,7 @@ def real_config() -> dict:
             / "index"
             / "bowtie2"
             / "hs1",
+            "size": 100_000,
         },
         "long": {
             "url": "https://sra-pub-src-1.s3.amazonaws.com/ERR3278877/BOWDEN03_20161104_FNFAB42715_MN16561_WTON000140_NA12878.fast5.tgz.2",
@@ -67,4 +69,5 @@ def real_config() -> dict:
             / "hs1.mmi",
         },
         "real_dir": pathlib.Path(os.environ["HOME"]) / "sdb1" / "lwfa",
+        "data_dir": pathlib.Path("paper/real/data"),
     }

@@ -3,6 +3,8 @@
 import os
 import sys
 
+import pandas as pd
+import pysam
 import sh
 from ont_fast5_api.conversion_tools.single_to_multi_fast5 import (
     batch_convert_single_to_multi,
@@ -61,6 +63,29 @@ def align_short_reads(cfg: dict) -> None:
         ),
         _out=sys.stdout,
         _err=sys.stderr,
+    )
+
+
+def index_short_bam(cfg: dict) -> None:
+    sh.samtools.sort(
+        cfg["real_dir"]
+        / cfg["short"]["accession"]
+        / f"{cfg['short']['accession']}.bam",
+        o=cfg["real_dir"]
+        / cfg["short"]["accession"]
+        / f"{cfg['short']['accession']}.sorted.bam",
+        threads=8,
+    )
+    sh.mv(
+        cfg["real_dir"]
+        / cfg["short"]["accession"]
+        / f"{cfg['short']['accession']}.sorted.bam",
+        cfg["real_dir"]
+        / cfg["short"]["accession"]
+        / f"{cfg['short']['accession']}.bam",
+    )
+    sh.samtools.index(
+        cfg["real_dir"] / cfg["short"]["accession"] / f"{cfg['short']['accession']}.bam"
     )
 
 
@@ -138,12 +163,37 @@ def call_base_pod5(cfg: dict):
     )
 
 
+def generate_short_data(cfg: dict):
+    texts = []
+    queries = []
+
+    with pysam.AlignmentFile(cfg["real_dir"] / "ERR091574/ERR091574.bam") as bam:
+        for read in bam.fetch():
+            if read.is_unmapped():
+                continue
+
+            text = read.get_reference_sequence()
+            query = read.query_sequence
+            texts.append(text)
+            query.append(query)
+
+            if len(texts) >= cfg["short"]["size"]:
+                break
+
+    pd.Dataframe({
+        "text": texts,
+        "query": queries,
+    }).to_csv("paper")
+
+
 if __name__ == "__main__":
     cfg = config.real_config()
     # download_short_reads(cfg)
     # align_short_reads(cfg)
+    # index_short_bam(cfg)
     # download_long_reads(cfg)
     # single_to_multi_fast5(cfg)
     # get_pod5_from_fast5(cfg)
     # download_model(cfg)
     # call_base_pod5(cfg)
+    # generate_short_data(cfg)

@@ -12,12 +12,11 @@ from wavefront_local import config, test
 
 
 def generate_sim(cfg: dict):
+    cfg["data_dir"].mkdir(exist_ok=True, parents=True)
     for length in cfg["lengths"]:
         for err_num in cfg["err_nums"]:
             for end_up in cfg["end_ups"]:
-                data_file = (
-                    pathlib.Path("paper/sim/data") / f"{length}_{err_num}_{end_up}.csv"
-                )
+                data_file = cfg["data_dir"] / f"{length}_{err_num}_{end_up}.csv"
                 test.generate_sim_data(
                     size=cfg["size"],
                     length=length,
@@ -60,7 +59,7 @@ def compile_sim(cfg: dict):
 
 def bench_sim(cfg: dict):
     cfg["result_dir"].mkdir(exist_ok=True, parents=True)
-    for methods in cfg["libs"].values():
+    for lib, methods in cfg["libs"].items():
         for method in methods:
             with open(cfg["result_dir"] / f"{method}.csv", "w") as fd:
                 fd.write("length,err_num,end_up,method,time,memory\n")
@@ -68,7 +67,7 @@ def bench_sim(cfg: dict):
                 for length in cfg["lengths"]:
                     for err_num in cfg["err_nums"]:
                         for end_up in cfg["end_ups"]:
-                            sh.Command(cfg["cpp_dir"] / "sim_lwfa")(
+                            sh.Command(cfg["cpp_dir"] / f"sim_{lib}")(
                                 length,
                                 err_num,
                                 end_up,
@@ -118,6 +117,6 @@ if __name__ == "__main__":
     cfg = config.sim_config()
 
     # generate_sim(cfg)
-    compile_sim(cfg)
-    bench_sim(cfg)
-    draw_sim(cfg)
+    # compile_sim(cfg)
+    # bench_sim(cfg)
+    # draw_sim(cfg)
