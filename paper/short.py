@@ -91,7 +91,9 @@ def generate_short_data(cfg: dict) -> None:
     queries = []
 
     rng = np.random.default_rng(cfg["seed"])
-    with pysam.AlignmentFile(cfg["real_dir"] / "ERR091574/ERR091574.bam") as bam:
+    with pysam.AlignmentFile(
+        cfg["real_dir"] / cfg["short"]["accession"] / f"{cfg['short']['accession']}.bam"
+    ) as bam:
         for read in bam.fetch():
             if read.is_unmapped:
                 continue

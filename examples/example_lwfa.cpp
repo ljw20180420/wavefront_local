@@ -1,6 +1,5 @@
 #include "lwfa.hpp"
 #include "score.hpp"
-#include "system.hpp"
 #include <algorithm>
 #include <iostream>
 

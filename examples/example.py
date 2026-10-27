@@ -3,10 +3,10 @@
 from wavefront_local._core import cpplbiwfa, cpplwfa
 
 from wavefront_local import pylbiwfa, pylwfa
-from wavefront_local.score import bowtie_score, transform_score
+from wavefront_local.score import bowtie_score, classical2wfa_sys
 
 l_c, x_c, o_c, e_c = bowtie_score()  # classical scoring system
-x, o, e, j = transform_score(l_c, x_c, o_c, e_c)  # transform to wfa scoring system
+x, o, e, j = classical2wfa_sys(l_c, x_c, o_c, e_c)  # transform to wfa scoring system
 c_f = "L"  # for local scope at start
 c_r = "L"  # for local scope at end
 

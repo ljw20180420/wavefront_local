@@ -3,6 +3,9 @@
 import argparse
 import os
 import pathlib
+import sys
+
+import sh
 
 from wavefront_local import config, test
 
@@ -35,16 +38,12 @@ def handle_config() -> dict:
     return cfg
 
 
-if __name__ == "__main__":
-    os.chdir(pathlib.Path(__file__).resolve().parent)
-
-    cfg = handle_config()
-
+def run_test(cfg: dict) -> None:
     for length in cfg["lengths"]:
         for err in cfg["errs"]:
             for align_mode in cfg["align_modes"]:
                 data_file = (
-                    pathlib.Path("data")
+                    pathlib.Path("test/data")
                     / align_mode
                     / f"{length}_{err:.2}_{cfg['end_up']}.csv"
                 )
@@ -61,7 +60,7 @@ if __name__ == "__main__":
                 for score_schema in cfg["score_schemas"]:
                     for aligner in cfg["aligners"]:
                         align_file = (
-                            pathlib.Path("align")
+                            pathlib.Path("test/align")
                             / aligner
                             / align_mode
                             / score_schema
@@ -74,3 +73,18 @@ if __name__ == "__main__":
                             aligner=aligner,
                             align_file=align_file,
                         )
+
+
+def run_example() -> None:
+    sh.Command("examples/lwfa.sh")(_out=sys.stdout, _err=sys.stderr)
+    sh.Command("examples/lbiwfa.sh")(_out=sys.stdout, _err=sys.stderr)
+    sh.Command("examples/example.py")(_out=sys.stdout, _err=sys.stderr)
+
+
+if __name__ == "__main__":
+    os.chdir(pathlib.Path(__file__).resolve().parent.parent)
+
+    # cfg = handle_config()
+    # run_test(cfg)
+
+    run_example()

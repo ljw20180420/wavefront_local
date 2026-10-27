@@ -90,6 +90,65 @@ def call_base_pod5(cfg: dict):
     )
 
 
+def generate_long_data(cfg: dict) -> None:
+    texts = []
+    queries = []
+
+    rng = np.random.default_rng(cfg["seed"])
+    with pysam.AlignmentFile(
+        cfg["real_dir"] / cfg["long"]["accesion"] / f"{cfg['long']['accesion']}.bam"
+    ) as bam:
+        for read in bam.fetch():
+            if read.is_unmapped:
+                continue
+
+            text = read.get_reference_sequence().upper()
+            query = read.query_sequence.upper()
+
+            if (
+                len(text) <= cfg["long"]["min_length"]
+                or len(query) <= cfg["long"]["min_length"]
+            ):
+                continue
+
+            tup, tdown = rng.integers(low=0, high=cfg["long"]["end_up"] + 1, size=2)
+            text = (
+                test._random_DNA(tup, rng)
+                + text[tup : len(text) - tdown]
+                + test._random_DNA(tdown, rng)
+            )
+
+            texts.append(text)
+            queries.append(query)
+
+            if len(texts) >= cfg["long"]["size"]:
+                break
+
+    cfg["long"]["data_dir"].mkdir(exist_ok=True, parents=True)
+    pd.DataFrame({
+        "text": texts,
+        "query": queries,
+    }).to_csv(cfg["long"]["data_dir"] / "long.csv", index=False)
+
+
+def bench_long_data(cfg: dict) -> None:
+    compile_libs(cfg)
+    cfg["long"]["result_dir"].mkdir(exist_ok=True, parents=True)
+    with open(cfg["long"]["result_dir"] / "long.csv", "w") as fd:
+        for lib, methods in cfg["libs"].items():
+            for method in methods:
+                fd.write("method,time,memory\n")
+                fd.writelines(
+                    f"{method},{time_memory}"
+                    for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
+                        cfg["long"]["data_dir"] / "long.csv",
+                        lib,
+                        method,
+                        _iter=True,
+                    )
+                )
+
+
 if __name__ == "__main__":
     cfg = config.bench_config()
     # download_long_reads(cfg)
@@ -97,3 +156,5 @@ if __name__ == "__main__":
     # get_pod5_from_fast5(cfg)
     # download_model(cfg)
     # call_base_pod5(cfg)
+    generate_long_data(cfg)
+    # bench_long_data(cfg)

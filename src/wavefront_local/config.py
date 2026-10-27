@@ -66,6 +66,9 @@ def bench_config() -> dict:
             / "index"
             / "minimap2"
             / "hs1.mmi",
+            "size": 25_000,
+            "end_up": 100,
+            "min_length": 10_000,
             "data_dir": pathlib.Path("paper/real/data"),
             "result_dir": pathlib.Path("paper/real/result"),
         },

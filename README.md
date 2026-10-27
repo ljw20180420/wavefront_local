@@ -114,11 +114,6 @@ In preparation.
   - pybind11
   - vscode debug
 
-- move core code outside pkg into pkg
-- prefix auxilary func by _
-- rearrange pkg such that each file abstract certain concept
-- test python example in test
-
 - add realdata benchmark
 - mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm

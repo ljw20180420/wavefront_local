@@ -1,6 +1,5 @@
 #include "lbiwfa.hpp"
 #include "score.hpp"
-#include "system.hpp"
 #include <iostream>
 
 int main(int argc, char **argv)
