@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 resolution-markers = [
     "sys_platform == 'win32'",
@@ -672,6 +672,12 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/71/fc/7c8e01f41a6e671d7b11be470eeb3d15339c75ce5559935f3f55890eec6b/progressbar33-2.4.tar.gz", hash = "sha256:51fe0d9b3b4023db2f983eeccdfc8c9846b84db8443b9bee002c7f58f4376eff", size = 10184, upload-time = "2014-08-29T08:55:20.581Z" }
 
 [[package]]
+name = "py2bit"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/46/3b/9dedd2e35cebcd4eb3539514b5ac674fd45654404839e6f9eff6e25d67c7/py2bit-1.0.1.tar.gz", hash = "sha256:4972f85eb3844cdfba43eb54ab3c8349a0536e03dfd7db07ca8d3447285ad20c", size = 18765, upload-time = "2026-04-21T08:07:49.709Z" }
+
+[[package]]
 name = "pyarrow"
 version = "22.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -894,6 +900,7 @@ dependencies = [
     { name = "ont-fast5-api" },
     { name = "pandas" },
     { name = "pod5" },
+    { name = "py2bit" },
     { name = "pysam" },
     { name = "setuptools" },
     { name = "sh" },
@@ -914,6 +921,7 @@ requires-dist = [
     { name = "ont-fast5-api", specifier = ">=4.1.3" },
     { name = "pandas", specifier = ">=3.0.3" },
     { name = "pod5", specifier = ">=0.3.49" },
+    { name = "py2bit", specifier = ">=1.0.1" },
     { name = "pysam", specifier = ">=0.24.1" },
     { name = "setuptools", specifier = "<=80.10.2" },
     { name = "sh", specifier = ">=2.4.0" },

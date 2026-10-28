@@ -66,6 +66,13 @@ def bench_config() -> dict:
             / "index"
             / "minimap2"
             / "hs1.mmi",
+            "2bit": pathlib.Path(os.environ["HOME"])
+            / "sdb1"
+            / "ucsc"
+            / "hubs"
+            / "myHub"
+            / "lhs1"
+            / "lhs1.2bit",
             "size": 25_000,
             "end_up": 100,
             "min_length": 10_000,
@@ -74,4 +81,13 @@ def bench_config() -> dict:
         },
         "figure_dir": pathlib.Path("paper/draw/figure"),
         "table_dir": pathlib.Path("paper/draw/table"),
+    }
+
+
+def cell_config() -> dict:
+    return {
+        "length": 100,
+        "end": 10,
+        "err": 0.05,
+        "seed": 63036,
     }

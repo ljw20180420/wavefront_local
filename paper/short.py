@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import sys
 
 import numpy as np
@@ -12,8 +13,9 @@ from wavefront_local import config, test
 
 
 def download_short_reads(cfg: dict) -> None:
+    accession = cfg["short"]["accession"]
     sh.prefetch(
-        cfg["short"]["accession"],
+        accession,
         max_size="100GB",
         output_directory=cfg["real_dir"],
         _out=sys.stdout,
@@ -21,17 +23,13 @@ def download_short_reads(cfg: dict) -> None:
     )
 
     sh.vdb_validate(
-        cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.sra",
+        cfg["real_dir"] / accession / f"{accession}.sra",
         _out=sys.stdout,
         _err=sys.stderr,
     )
 
     sh.fasterq_dump(
-        cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.sra",
+        cfg["real_dir"] / accession / f"{accession}.sra",
         outdir=cfg["real_dir"] / cfg["short"]["accession"],
         _out=sys.stdout,
         _err=sys.stderr,
@@ -39,21 +37,16 @@ def download_short_reads(cfg: dict) -> None:
 
 
 def align_short_reads(cfg: dict) -> None:
+    accession = cfg["short"]["accession"]
     sh.samtools.view(
         "-b",
         "-",
-        o=cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.bam",
+        o=cfg["real_dir"] / accession / f"{accession}.bam",
         _in=sh.bowtie2(
             "-1",
-            cfg["real_dir"]
-            / cfg["short"]["accession"]
-            / f"{cfg['short']['accession']}_1.fastq",
+            cfg["real_dir"] / accession / f"{accession}_1.fastq",
             "-2",
-            cfg["real_dir"]
-            / cfg["short"]["accession"]
-            / f"{cfg['short']['accession']}_2.fastq",
+            cfg["real_dir"] / accession / f"{accession}_2.fastq",
             p=16,
             x=cfg["short"]["hs1"],
             _piped=True,
@@ -64,36 +57,33 @@ def align_short_reads(cfg: dict) -> None:
 
 
 def index_short_bam(cfg: dict) -> None:
-    sh.samtools.sort(
-        cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.bam",
-        o=cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.sorted.bam",
-        threads=8,
+    accession = cfg["short"]["accession"]
+    pysam.samtools.sort(
+        "-@",
+        "8",
+        "-o",
+        os.fspath(cfg["real_dir"] / accession / f"{accession}.sorted.bam"),
+        os.fspath(cfg["real_dir"] / accession / f"{accession}.bam"),
+        catch_stdout=False,
     )
     sh.mv(
-        cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.sorted.bam",
-        cfg["real_dir"]
-        / cfg["short"]["accession"]
-        / f"{cfg['short']['accession']}.bam",
+        cfg["real_dir"] / accession / f"{accession}.sorted.bam",
+        cfg["real_dir"] / accession / f"{accession}.bam",
     )
-    sh.samtools.index(
-        cfg["real_dir"] / cfg["short"]["accession"] / f"{cfg['short']['accession']}.bam"
+    pysam.samtools.index(
+        "-@",
+        8,
+        os.fspath(cfg["real_dir"] / accession / f"{accession}.bam"),
+        catch_stdout=False,
     )
 
 
 def generate_short_data(cfg: dict) -> None:
+    accession = cfg["short"]["accession"]
     texts = []
     queries = []
-
     rng = np.random.default_rng(cfg["seed"])
-    with pysam.AlignmentFile(
-        cfg["real_dir"] / cfg["short"]["accession"] / f"{cfg['short']['accession']}.bam"
-    ) as bam:
+    with pysam.AlignmentFile(cfg["real_dir"] / accession / f"{accession}.bam") as bam:
         for read in bam.fetch():
             if read.is_unmapped:
                 continue
@@ -125,9 +115,9 @@ def bench_short_data(cfg: dict) -> None:
     compile_libs(cfg)
     cfg["short"]["result_dir"].mkdir(exist_ok=True, parents=True)
     with open(cfg["short"]["result_dir"] / "short.csv", "w") as fd:
+        fd.write("method,time,memory\n")
         for lib, methods in cfg["libs"].items():
             for method in methods:
-                fd.write("method,time,memory\n")
                 fd.writelines(
                     f"{method},{time_memory}"
                     for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
