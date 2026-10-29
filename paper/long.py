@@ -4,18 +4,14 @@ import os
 import pathlib
 import sys
 
-import numpy as np
 import pandas as pd
 import py2bit
 import pysam
 import sh
 from compile import compile_libs
-from ont_fast5_api.conversion_tools.single_to_multi_fast5 import (
-    batch_convert_single_to_multi,
-)
 from pod5.tools.pod5_convert_from_fast5 import convert_from_fast5
 
-from wavefront_local import config, test
+from wavefront_local import config
 
 
 def download_long_reads(cfg: dict) -> None:
@@ -42,6 +38,10 @@ def download_long_reads(cfg: dict) -> None:
 
 
 def single_to_multi_fast5(cfg: dict) -> None:
+    from ont_fast5_api.conversion_tools.single_to_multi_fast5 import (
+        batch_convert_single_to_multi,
+    )
+
     accession = cfg["long"]["accession"]
     output_folder = cfg["real_dir"] / accession / "multi"
     output_folder.mkdir(exist_ok=True, parents=True)
@@ -137,6 +137,11 @@ def generate_long_data(cfg: dict) -> None:
             ):
                 continue
 
+            aligned_pairs = read.get_aligned_pairs(matches_only=True, with_seq=True)
+            match_num = sum(rbase.isupper() for qpos, rpos, rbase in aligned_pairs)
+            if match_num / len(query) < cfg["long"]["min_mapping_rate"]:
+                continue
+
             text = tb.sequence(
                 read.reference_name,
                 read.reference_start,
@@ -171,12 +176,13 @@ def bench_long_data(cfg: dict) -> None:
         fd.flush()
         for lib, methods in cfg["libs"].items():
             for method in methods:
+                print(method, file=sys.stderr)
                 for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
                     cfg["long"]["data_dir"] / "long.csv",
                     lib,
                     method,
-                    _iter=True,
                     _err=sys.stderr,
+                    _iter=True,
                 ):
                     time, memory = time_memory.strip().split(",")
                     fd.write(f"{method},{time},{memory}\n")

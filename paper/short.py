@@ -4,13 +4,12 @@ import os
 import pathlib
 import sys
 
-import numpy as np
 import pandas as pd
 import pysam
 import sh
 from compile import compile_libs
 
-from wavefront_local import config, test
+from wavefront_local import config
 
 
 def download_short_reads(cfg: dict) -> None:
@@ -112,11 +111,12 @@ def bench_short_data(cfg: dict) -> None:
         fd.flush()
         for lib, methods in cfg["libs"].items():
             for method in methods:
+                print(method, file=sys.stderr)
                 for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
                     cfg["short"]["data_dir"] / "short.csv",
                     lib,
                     method,
-                    err=sys.stderr,
+                    _err=sys.stderr,
                     _iter=True,
                 ):
                     time, memory = time_memory.strip().split(",")

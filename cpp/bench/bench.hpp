@@ -124,7 +124,6 @@ public:
             exit(EXIT_FAILURE);
         }
         data_file = argv[1];
-        std::cerr << data_file << '\n';
 
         total_time = 0.0;
     }
@@ -149,7 +148,6 @@ public:
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
         total_time += elapsed.count();
-        // std::cerr << total_time << '\n';
     }
 
     long peak_rss()

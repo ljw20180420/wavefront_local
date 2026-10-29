@@ -73,9 +73,10 @@ def bench_config() -> dict:
             / "lhs1"
             / "lhs1.2bit",
             "size": 1_000,
-            "min_length": 4_000,
-            "max_length": 6_000,
+            "min_length": 7_000,
+            "max_length": 8_000,
             "min_mapping_quality": 30,
+            "min_mapping_rate": 0.5,
             "data_dir": pathlib.Path("paper/real/data"),
             "result_dir": pathlib.Path("paper/real/result"),
         },

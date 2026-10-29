@@ -104,10 +104,6 @@ In preparation.
 # TODO
 
 ```
-- how to speed up bench
-  - use bwa score system
-- parse short reads data
-- rerun bench when third generation alignment finishes
 - 先完成作图，整理格式，攥写文章
 - learn
   - uv
