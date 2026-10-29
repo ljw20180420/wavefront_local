@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import pathlib
 import sys
 
 import numpy as np
@@ -114,7 +115,8 @@ def generate_long_data(cfg: dict) -> None:
     accession = cfg["long"]["accession"]
     texts = []
     queries = []
-    rng = np.random.default_rng(cfg["seed"])
+    cigarstrings = []
+    mapping_qualities = []
     with (
         pysam.AlignmentFile(cfg["real_dir"] / accession / f"{accession}.bam") as bam,
         py2bit.open(os.fspath(cfg["long"]["2bit"])) as tb,
@@ -124,33 +126,28 @@ def generate_long_data(cfg: dict) -> None:
                 read.is_unmapped
                 or read.is_supplementary
                 or read.is_secondary
-                or read.mapping_quality < 20
+                or read.mapping_quality < cfg["long"]["min_mapping_quality"]
             ):
                 continue
 
             query = read.query_sequence.upper()
-            extend = (len(query) - (read.reference_end - read.reference_start)) // 2
-            text = tb.sequence(
-                read.reference_name,
-                read.reference_start - extend,
-                read.reference_end + extend,
-            ).upper()
-
             if (
-                len(text) <= cfg["long"]["min_length"]
-                or len(query) <= cfg["long"]["min_length"]
+                len(query) < cfg["long"]["min_length"]
+                or len(query) > cfg["long"]["max_length"]
             ):
                 continue
 
-            tup, tdown = rng.integers(low=0, high=cfg["long"]["end_up"] + 1, size=2)
-            text = (
-                test._random_DNA(tup, rng)
-                + text[tup : len(text) - tdown]
-                + test._random_DNA(tdown, rng)
-            )
+            text = tb.sequence(
+                read.reference_name,
+                read.reference_start,
+                read.reference_end,
+            ).upper()
 
             texts.append(text)
             queries.append(query)
+
+            cigarstrings.append(read.cigarstring)
+            mapping_qualities.append(read.mapping_quality)
 
             if len(texts) >= cfg["long"]["size"]:
                 break
@@ -160,6 +157,10 @@ def generate_long_data(cfg: dict) -> None:
         "text": texts,
         "query": queries,
     }).to_csv(cfg["long"]["data_dir"] / "long.csv", index=False)
+    pd.DataFrame({
+        "cigarstring": cigarstrings,
+        "mapping_quality": mapping_qualities,
+    }).to_csv(cfg["long"]["data_dir"] / "long_auxilary.csv", index=False)
 
 
 def bench_long_data(cfg: dict) -> None:
@@ -167,26 +168,30 @@ def bench_long_data(cfg: dict) -> None:
     cfg["long"]["result_dir"].mkdir(exist_ok=True, parents=True)
     with open(cfg["long"]["result_dir"] / "long.csv", "w") as fd:
         fd.write("method,time,memory\n")
+        fd.flush()
         for lib, methods in cfg["libs"].items():
             for method in methods:
-                fd.writelines(
-                    f"{method},{time_memory}"
-                    for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
-                        cfg["long"]["data_dir"] / "long.csv",
-                        lib,
-                        method,
-                        _iter=True,
-                    )
-                )
+                for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
+                    cfg["long"]["data_dir"] / "long.csv",
+                    lib,
+                    method,
+                    _iter=True,
+                    _err=sys.stderr,
+                ):
+                    time, memory = time_memory.strip().split(",")
+                    fd.write(f"{method},{time},{memory}\n")
+                    fd.flush()
 
 
 if __name__ == "__main__":
+    os.chdir(pathlib.Path(__file__).resolve().parent.parent)
     cfg = config.bench_config()
+
     # download_long_reads(cfg)
     # single_to_multi_fast5(cfg)
     # get_pod5_from_fast5(cfg)
     # download_model(cfg)
     # call_base_pod5(cfg)
     # index_long_bam(cfg)
-    # generate_long_data(cfg)
+    generate_long_data(cfg)
     bench_long_data(cfg)

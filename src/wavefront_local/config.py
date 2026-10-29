@@ -50,7 +50,6 @@ def bench_config() -> dict:
             / "bowtie2"
             / "hs1",
             "size": 100_000,
-            "end_up": 10,
             "data_dir": pathlib.Path("paper/real/data"),
             "result_dir": pathlib.Path("paper/real/result"),
         },
@@ -73,9 +72,10 @@ def bench_config() -> dict:
             / "myHub"
             / "lhs1"
             / "lhs1.2bit",
-            "size": 25_000,
-            "end_up": 100,
-            "min_length": 10_000,
+            "size": 1_000,
+            "min_length": 4_000,
+            "max_length": 6_000,
+            "min_mapping_quality": 30,
             "data_dir": pathlib.Path("paper/real/data"),
             "result_dir": pathlib.Path("paper/real/result"),
         },
@@ -90,4 +90,5 @@ def cell_config() -> dict:
         "end": 10,
         "err": 0.05,
         "seed": 63036,
+        "cell_dir": pathlib.Path("paper/cell"),
     }

@@ -7,7 +7,7 @@ int main(int argc, char **argv)
     if (argc < 3)
     {
         std::cerr << "Error: lib is not provided\n";
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     std::string lib = argv[2];
 
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
         if (argc < 4)
         {
             std::cerr << "Error: method is not provided for parasail\n";
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         method = argv[3];
     }
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     else
     {
         std::cerr << "Error: unknown lib " << lib << '\n';
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     for (const auto &[t, q] : bench)
@@ -51,6 +51,5 @@ int main(int argc, char **argv)
         bench_base->align(t, q);
         bench.toc();
     }
-
-    std::cout << bench.total_time << ',' << bench.peak_rss() << std::endl;
+    std::cout << std::fixed << bench.total_time << ',' << bench.peak_rss() << std::endl;
 }

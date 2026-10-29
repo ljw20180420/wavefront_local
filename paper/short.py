@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import pathlib
 import sys
 
 import numpy as np
@@ -82,20 +83,12 @@ def generate_short_data(cfg: dict) -> None:
     accession = cfg["short"]["accession"]
     texts = []
     queries = []
-    rng = np.random.default_rng(cfg["seed"])
     with pysam.AlignmentFile(cfg["real_dir"] / accession / f"{accession}.bam") as bam:
         for read in bam.fetch():
             if read.is_unmapped:
                 continue
 
             text = read.get_reference_sequence().upper()
-            tup, tdown = rng.integers(low=0, high=cfg["short"]["end_up"] + 1, size=2)
-            text = (
-                test._random_DNA(tup, rng)
-                + text[tup : len(text) - tdown]
-                + test._random_DNA(tdown, rng)
-            )
-
             query = read.query_sequence.upper()
 
             texts.append(text)
@@ -116,23 +109,27 @@ def bench_short_data(cfg: dict) -> None:
     cfg["short"]["result_dir"].mkdir(exist_ok=True, parents=True)
     with open(cfg["short"]["result_dir"] / "short.csv", "w") as fd:
         fd.write("method,time,memory\n")
+        fd.flush()
         for lib, methods in cfg["libs"].items():
             for method in methods:
-                fd.writelines(
-                    f"{method},{time_memory}"
-                    for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
-                        cfg["short"]["data_dir"] / "short.csv",
-                        lib,
-                        method,
-                        _iter=True,
-                    )
-                )
+                for time_memory in sh.Command(cfg["bin_dir"] / "bench")(
+                    cfg["short"]["data_dir"] / "short.csv",
+                    lib,
+                    method,
+                    err=sys.stderr,
+                    _iter=True,
+                ):
+                    time, memory = time_memory.strip().split(",")
+                    fd.write(f"{method},{time},{memory}\n")
+                    fd.flush()
 
 
 if __name__ == "__main__":
+    os.chdir(pathlib.Path(__file__).resolve().parent.parent)
     cfg = config.bench_config()
+
     # download_short_reads(cfg)
     # align_short_reads(cfg)
     # index_short_bam(cfg)
-    # generate_short_data(cfg)
+    generate_short_data(cfg)
     bench_short_data(cfg)

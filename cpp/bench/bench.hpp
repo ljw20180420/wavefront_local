@@ -40,7 +40,7 @@ public:
         if (!fin_ptr->is_open())
         {
             std::cerr << "Error: Could not open file.\n";
-            std::exit(1);
+            std::exit(EXIT_FAILURE);
         }
         // neglect header
         this->operator++();
@@ -121,7 +121,7 @@ public:
         if (argc < 2)
         {
             std::cerr << "Error: data file is not provided\n";
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         data_file = argv[1];
         std::cerr << data_file << '\n';
@@ -149,6 +149,7 @@ public:
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed = end - start;
         total_time += elapsed.count();
+        // std::cerr << total_time << '\n';
     }
 
     long peak_rss()
@@ -197,7 +198,7 @@ public:
         // if (std::cmp_not_equal(s_t, s_t_aln))
         // {
         //     std::cerr << "inconsistant score\n";
-        //     std::exit(1);
+        //     std::exit(EXIT_FAILURE);
         // }
     }
 };
@@ -265,10 +266,15 @@ public:
         else
         {
             std::cerr << "Error: unknown method " << method << '\n';
-            exit(1);
+            exit(EXIT_FAILURE);
         }
-
-        doNotOptimize(result);
+        if (result == nullptr)
+        {
+            std::cerr << "Error: parasail_sw_trace_striped_sat failed to allocate memory or initialize.\n";
+            exit(EXIT_FAILURE);
+        }
+        parasail_cigar_t *cigar = parasail_result_get_cigar(result, t.c_str(), t.size(), q.c_str(), q.size(), matrix);
+        doNotOptimize(cigar);
     }
 };
 

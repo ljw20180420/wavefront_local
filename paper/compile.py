@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+import sys
 
 import sh
 
@@ -18,6 +19,8 @@ def compile_libs(cfg: dict):
         o=cfg["bin_dir"] / "bench",
         I="cpp/include",
         L="cpp/parasail/build",
+        # _out=sys.stdout,
+        # _err=sys.stderr,
     )
 
 

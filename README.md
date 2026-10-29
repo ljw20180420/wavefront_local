@@ -104,6 +104,8 @@ In preparation.
 # TODO
 
 ```
+- how to speed up bench
+  - use bwa score system
 - parse short reads data
 - rerun bench when third generation alignment finishes
 - 先完成作图，整理格式，攥写文章
@@ -114,11 +116,8 @@ In preparation.
   - pybind11
   - vscode debug
 
-- add realdata benchmark
 - mv long proof to supplementary information
 - add a diagram to illustrate the lwfa algorithm
-- compare lbiwfa and lwfa cell figure
-- clarify uv with scikit-build-core and pybind11
 - check plos computational biology
 
 - skip calculation for $s<e,o+e,x$

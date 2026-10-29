@@ -123,7 +123,7 @@ class Split(Enum):
     PATH = auto()
 
 
-def lbiwfa(
+def populate_cell(
     q: memoryview,
     t: memoryview,
     x: int,
@@ -132,7 +132,7 @@ def lbiwfa(
     j: int,
     c_f: Literal["M", "I", "D", "L"],
     c_r: Literal["M", "I", "D", "L"],
-) -> str:
+):
     Fr_f = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: -1)))
     if c_f != "L":
         Fr_f[c_f][0][0] = 0
@@ -145,6 +145,8 @@ def lbiwfa(
     s_t = sys.maxsize
     anti_diag_upper = -1
     anti_diag_lower = -1
+    score_upper_t = None
+    score_lower_t = None
     while 2 * s - o - p < s_t:
         Fr_f = next(q, t, Fr_f, s, x, o, e, j, c_f)
         if c_r == "L":
@@ -200,6 +202,24 @@ def lbiwfa(
                 split = Split.PATH
 
         s += 1
+
+    return d_t, f_t, c_t, score_upper_t, score_lower_t, split, Fr_f, Fr_r
+
+
+def lbiwfa(
+    q: memoryview,
+    t: memoryview,
+    x: int,
+    o: int,
+    e: int,
+    j: int,
+    c_f: Literal["M", "I", "D", "L"],
+    c_r: Literal["M", "I", "D", "L"],
+) -> str:
+    d_t, f_t, c_t, score_upper_t, score_lower_t, split, Fr_f, Fr_r = populate_cell(
+        q, t, x, o, e, j, c_f, c_r
+    )
+    p = max(x, o + e)
 
     n = (f_t + d_t) // 2
     m = (f_t - d_t) // 2
