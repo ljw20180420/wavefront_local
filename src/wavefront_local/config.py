@@ -16,6 +16,21 @@ def test_config() -> dict:
     }
 
 
+def method_name_mapping(method: str) -> str:
+    if method == "lwfa":
+        return "lWFA"
+    if method == "lbiwfa":
+        return "lBiWFA"
+    if method == "seqan":
+        return "SeqAn"
+    if method == "diag":
+        return "ParaDiag"
+    if method == "scan":
+        return "ParaScan"
+    if method == "striped":
+        return "ParaStrip"
+
+
 def bench_config() -> dict:
     return {
         "bin_dir": pathlib.Path("cpp/bench"),
@@ -32,9 +47,8 @@ def bench_config() -> dict:
         },
         "sim": {
             "size": 100,
-            "lengths": [250, 500, 1000, 2000, 4000],
-            "err_nums": [10, 100],
-            "end_ups": [10, 100],
+            "lengths": [100, 1000, 10000],
+            "errs": [0.01, 0.05, 0.1],
             "data_dir": pathlib.Path("paper/sim/data"),
             "result_dir": pathlib.Path("paper/sim/result"),
         },
@@ -73,8 +87,8 @@ def bench_config() -> dict:
             / "lhs1"
             / "lhs1.2bit",
             "size": 1_000,
-            "min_length": 7_000,
-            "max_length": 8_000,
+            "min_length": 10_000,
+            "max_length": 20_000,
             "min_mapping_quality": 30,
             "min_mapping_rate": 0.5,
             "data_dir": pathlib.Path("paper/real/data"),

@@ -1,20 +1,36 @@
+#!/usr/bin/env python
+
 import os
 import pathlib
 
-import matplotlib
 import pandas as pd
-from plotnine import (
-    aes,
-    geom_col,
-    geom_line,
-    geom_point,
-    ggplot,
-    scale_x_continuous,
-    scale_x_discrete,
-    scale_y_continuous,
-)
+import plotly.express as px
+import plotly.graph_objects as go
 
 from wavefront_local import config
+
+
+def plotly_template() -> go.layout.Template:
+    return go.layout.Template(
+        layout=go.Layout(
+            width=500,
+            height=500,
+            font={
+                "size": 25,
+                "color": "black",
+            },
+            xaxis={
+                "ticks": "outside",
+                "ticklen": 10,
+                "automargin": True,
+            },
+            yaxis={
+                "ticks": "outside",
+                "ticklen": 10,
+                "automargin": True,
+            },
+        )
+    )
 
 
 def draw_sim(cfg: dict):
@@ -25,68 +41,95 @@ def draw_sim(cfg: dict):
             for method in methods
         ],
         ignore_index=True,
+    ).assign(
+        method=lambda df: df["method"].map(config.method_name_mapping),
+        err=lambda df: df["err"].map(lambda err: f"{err:.0%}"),
     )
-    for err_num in cfg["sim"]["err_nums"]:
-        for end_up in cfg["sim"]["end_ups"]:
-            df_slice: pd.DataFrame = df.query(
-                "err_num == @err_num and end_up == @end_up"
-            ).reset_index(drop=True)
-            for target in ["time", "memory"]:
-                df_slice.pivot_table(
-                    values=target, index="method", columns="length"
-                ).rename_axis(index=None, columns=None).style.format(
-                    escape=True, precision=cfg["precision"][target]
-                ).to_latex(
-                    buf=cfg["table_dir"] / f"sim_{err_num}_{end_up}_{target}.tex"
-                )
-                (
-                    ggplot(
-                        data=df_slice,
-                        mapping=aes(x="length", y=target, color="method"),
-                    )
-                    + geom_point()
-                    + geom_line()
-                    + scale_x_continuous(name="length")
-                    + scale_y_continuous(name=target, trans="log10")
-                ).save(cfg["figure_dir"] / f"sim_{err_num}_{end_up}_{target}.pdf")
+
+    for target in ["time", "memory"]:
+        df.pivot_table(
+            values=target, index="method", columns=["length", "err"]
+        ).rename_axis(index=None, columns=["length", "error rate"]).style.format(
+            escape="latex-math", precision=cfg["precision"][target]
+        ).to_latex(buf=cfg["table_dir"] / f"sim_{target}.tex")
+
+    for length in cfg["sim"]["lengths"]:
+        df_slice = df.query("length == @length").reset_index(drop=True)
+        for target in ["time", "memory"]:
+            fig = px.bar(
+                df_slice,
+                x="err",
+                y=target,
+                color="method",
+                barmode="group",
+                labels={
+                    target: "peak space (KiB)" if target == "memory" else "time (ms)",
+                    "method": "library",
+                    "err": "error rate",
+                },
+                category_orders={
+                    "err": [f"{err:.0%}" for err in cfg["sim"]["errs"]],
+                    "method": [
+                        method
+                        for lib, methods in cfg["libs"].items()
+                        for method in methods
+                    ],
+                },
+            )
+            fig.update_layout(template=plotly_template())
+            fig.update_xaxes(type="category")
+            fig.write_image(cfg["figure_dir"] / f"sim_{length}_{target}.pdf")
 
 
 def draw_short(cfg: dict) -> None:
-    df = pd.read_csv(cfg["short"]["result_dir"] / "short.csv", header=0)
+    df = pd.read_csv(cfg["short"]["result_dir"] / "short.csv", header=0).assign(
+        method=lambda df: df["method"].map(config.method_name_mapping)
+    )
+    df.set_index("method").rename_axis(index=None).style.format(
+        escape="latex-math", precision=2
+    ).to_latex(buf=cfg["table_dir"] / "short.tex")
     for target in ["time", "memory"]:
-        df[["method", target]].style.format(
-            escape=True, precision=cfg["precision"][target]
-        ).to_latex(buf=cfg["table_dir"] / f"short_{target}.tex")
-        (
-            ggplot(
-                data=df,
-                mapping=aes(x="method", y=target),
-            )
-            + geom_col()
-            + scale_x_discrete(name="length")
-            + scale_y_continuous(name=target)
-        ).save(cfg["figure_dir"] / f"short_{target}.pdf")
+        fig = px.bar(
+            df,
+            x="method",
+            y=target,
+            category_orders=[
+                method for lib, methods in cfg["libs"].items() for method in methods
+            ],
+            labels={
+                "method": "library",
+                target: "peak space (KiB)" if target == "memory" else "time (ms)",
+            },
+        )
+        fig.update_layout(template=plotly_template())
+        fig.write_image(cfg["figure_dir"] / f"short_{target}.pdf")
 
 
 def draw_long(cfg: dict) -> None:
-    df = pd.read_csv(cfg["long"]["result_dir"] / "long.csv", header=0)
+    df = pd.read_csv(cfg["long"]["result_dir"] / "long.csv", header=0).assign(
+        method=lambda df: df["method"].map(config.method_name_mapping)
+    )
+    df.set_index("method").rename_axis(index=None).style.format(
+        escape="latex-math", precision=2
+    ).to_latex(buf=cfg["table_dir"] / "long.tex")
     for target in ["time", "memory"]:
-        df[["method", target]].style.format(
-            escape=True, precision=cfg["precision"][target]
-        ).to_latex(buf=cfg["table_dir"] / f"long_{target}.tex")
-        (
-            ggplot(
-                data=df,
-                mapping=aes(x="method", y=target),
-            )
-            + geom_col()
-            + scale_x_discrete(name="length")
-            + scale_y_continuous(name=target)
-        ).save(cfg["figure_dir"] / f"long_{target}.pdf")
+        fig = px.bar(
+            df,
+            x="method",
+            y=target,
+            category_orders=[
+                method for lib, methods in cfg["libs"].items() for method in methods
+            ],
+            labels={
+                "method": "library",
+                target: "peak space (KiB)" if target == "memory" else "time (ms)",
+            },
+        )
+        fig.update_layout(template=plotly_template())
+        fig.write_image(cfg["figure_dir"] / f"long_{target}.pdf")
 
 
 if __name__ == "__main__":
-    matplotlib.use("Agg")
     os.chdir(pathlib.Path(__file__).resolve().parent.parent)
     cfg = config.bench_config()
     cfg["figure_dir"].mkdir(exist_ok=True, parents=True)

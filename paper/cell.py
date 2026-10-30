@@ -7,6 +7,7 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 import plotly.express as px
+from draw import plotly_template
 
 from wavefront_local import config
 from wavefront_local.lbiwfa import populate_cell
@@ -77,8 +78,16 @@ def collect_cells(
     _, _, Fr = lwfa(q, t, x, o, e, j, "L", "L")
     df = Fr2cells(Fr)
 
-    _, _, _, _, _, _, Fr_f, Fr_r = populate_cell(q, t, x, o, e, j, "L", "L")
-    bidf = biFr2cells(Fr_f, Fr_r, len(t), len(q))
+    bidfs = []
+    pg = populate_cell(q, t, x, o, e, j, "L", "L")
+    while True:
+        try:
+            Fr_f, Fr_r = next(pg)
+            bidfs.append(biFr2cells(Fr_f, Fr_r, len(t), len(q)))
+        except StopIteration as err:
+            d_t, f_t, c_t, score_upper_t, score_lower_t, split = err.value
+            break
+    bidf = pd.concat(bidfs, ignore_index=True).drop_duplicates(ignore_index=True)
 
     return df, bidf, t, q
 
@@ -95,10 +104,10 @@ def display_cells(cfg: dict) -> None:
             color_continuous_scale=["white", "red"],
             range_color=[0, 1],
             aspect="equal",
+            labels={"x": "query", "y": "text"},
         )
-        fig.update_layout(width=500, height=500, coloraxis_showscale=False)
-        fig.update_xaxes(title="query", side="top")
-        fig.update_yaxes(title="text")
+        fig.update_layout(coloraxis_showscale=False, template=plotly_template())
+        fig.update_xaxes(side="top")
         fig.write_image(cfg["cell_dir"] / f"{name}.pdf")
 
 

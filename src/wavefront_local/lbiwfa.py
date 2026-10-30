@@ -6,7 +6,7 @@ from typing import Literal
 from .lwfa import extend, lwfa, track
 
 
-def next(
+def lnext(
     q: memoryview,
     t: memoryview,
     Fr: defaultdict,
@@ -148,7 +148,7 @@ def populate_cell(
     score_upper_t = None
     score_lower_t = None
     while 2 * s - o - p < s_t:
-        Fr_f = next(q, t, Fr_f, s, x, o, e, j, c_f)
+        Fr_f = lnext(q, t, Fr_f, s, x, o, e, j, c_f)
         if c_r == "L":
             s_b, d_b, f_b, c_b = try_jump(Fr_f, s, j, len(t), len(q))
             if s_b < s_t:
@@ -159,7 +159,7 @@ def populate_cell(
                 score_upper_t = s
                 split = Split.FORWARD_JUMP
 
-        Fr_r = next(q[::-1], t[::-1], Fr_r, s, x, o, e, j, c_r)
+        Fr_r = lnext(q[::-1], t[::-1], Fr_r, s, x, o, e, j, c_r)
         if c_f == "L":
             s_b, d_b, f_b, c_b = try_jump(Fr_r, s, j, len(t), len(q))
             if s_b < s_t:
@@ -171,6 +171,8 @@ def populate_cell(
                 c_t = c_b
                 score_lower_t = s
                 split = Split.REVERSE_JUMP
+
+        yield Fr_f, Fr_r
 
         anti_diag_upper = max(max(Fr_f["M"][s].values(), default=-1), anti_diag_upper)
         anti_diag_lower = max(max(Fr_r["M"][s].values(), default=-1), anti_diag_lower)
@@ -203,7 +205,7 @@ def populate_cell(
 
         s += 1
 
-    return d_t, f_t, c_t, score_upper_t, score_lower_t, split, Fr_f, Fr_r
+    return d_t, f_t, c_t, score_upper_t, score_lower_t, split
 
 
 def lbiwfa(
@@ -216,9 +218,14 @@ def lbiwfa(
     c_f: Literal["M", "I", "D", "L"],
     c_r: Literal["M", "I", "D", "L"],
 ) -> str:
-    d_t, f_t, c_t, score_upper_t, score_lower_t, split, Fr_f, Fr_r = populate_cell(
-        q, t, x, o, e, j, c_f, c_r
-    )
+    pg = populate_cell(q, t, x, o, e, j, c_f, c_r)
+    while True:
+        try:
+            Fr_f, Fr_r = next(pg)
+        except StopIteration as err:
+            d_t, f_t, c_t, score_upper_t, score_lower_t, split = err.value
+            break
+
     p = max(x, o + e)
 
     n = (f_t + d_t) // 2

@@ -268,11 +268,14 @@ public:
         }
         if (result == nullptr)
         {
-            std::cerr << "Error: parasail_sw_trace_striped_sat failed to allocate memory or initialize.\n";
+            std::cerr << "Error: parasail " << method << " failed to allocate memory or initialize.\n";
             exit(EXIT_FAILURE);
         }
         parasail_cigar_t *cigar = parasail_result_get_cigar(result, t.c_str(), t.size(), q.c_str(), q.size(), matrix);
         doNotOptimize(cigar);
+
+        parasail_result_free(result);
+        parasail_cigar_free(cigar);
     }
 };
 
