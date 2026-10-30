@@ -23,5 +23,6 @@ jobs:
         run: pipx run uv build --sdist
       - name: Move wheel to dist
         run: mv wheelhouse/*.whl -t dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
       
