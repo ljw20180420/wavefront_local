@@ -106,6 +106,7 @@ In preparation.
 ```
 - 先完成作图，整理格式，攥写文章
 - learn
+  - C++ high performance: master the art of optimizing the functioning of your C++ code
   - uv
   - sckkit-build-core
   - cmake
